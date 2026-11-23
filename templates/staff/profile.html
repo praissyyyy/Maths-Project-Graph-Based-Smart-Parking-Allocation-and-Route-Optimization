@@ -1,0 +1,121 @@
+{% extends "staff/layout.html" %}
+
+{% block staff_content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <h4 class="fw-bold mb-1"><i class="bi bi-person-circle text-primary me-2"></i>Staff Member Profile</h4>
+        <p class="text-muted mb-0">Manage your parking attendant profile settings, credentials, and view recent security audits.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Profile & Credentials Card -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-person-badge text-primary me-2"></i>Account &amp; Security Settings</h6>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('staff.profile') }}">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small text-uppercase">Full Name</label>
+                        <input type="text" class="form-control bg-light" value="{{ user.name }}" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small text-uppercase">Email Address (Login)</label>
+                        <input type="email" class="form-control bg-light font-monospace" value="{{ user.email }}" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-muted small text-uppercase">Assigned Facility</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light font-monospace fw-bold">{{ facility.facility_id }}</span>
+                            <input type="text" class="form-control bg-light" value="{{ facility.facility_name }}" readonly>
+                        </div>
+                        <small class="text-muted">Staff facility assignments are managed centrally by the Super Administrator.</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Contact Phone Number</label>
+                        <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}" placeholder="Enter phone number">
+                    </div>
+
+                    <hr class="my-4">
+                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-shield-lock text-warning me-2"></i>Change Password</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Current Password</label>
+                        <input type="password" name="current_password" class="form-control" placeholder="Enter current password">
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">New Password</label>
+                            <input type="password" name="new_password" class="form-control" placeholder="Minimum 6 characters">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Confirm Password</label>
+                            <input type="password" name="confirm_password" class="form-control" placeholder="Re-type new password">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary fw-bold px-4">
+                        <i class="bi bi-check2-circle me-1"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Facility & Security Card -->
+    <div class="col-lg-6">
+        <!-- Facility Info Box -->
+        <div class="card border-0 shadow-sm mb-4 bg-primary text-white">
+            <div class="card-body p-4">
+                <span class="badge bg-white text-primary fw-bold mb-2">ASSIGNED FACILITY</span>
+                <h4 class="fw-bold text-white mb-1">{{ facility.facility_name }}</h4>
+                <p class="text-white-50 mb-3"><i class="bi bi-geo-alt me-1"></i>Gandhipuram, Coimbatore | OSM Node: <code>{{ facility.node_id }}</code></p>
+                <div class="row g-2 text-center pt-2 border-top border-white border-opacity-25">
+                    <div class="col-4">
+                        <small class="text-white-50">Total Bays</small>
+                        <div class="fs-4 fw-bold text-white">{{ facility.capacity }}</div>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-white-50">Initial Occupied</small>
+                        <div class="fs-4 fw-bold text-white">{{ facility.initial_occupied }}</div>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-white-50">Facility State</small>
+                        <div class="fs-4 fw-bold text-white">Active</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Login History -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-primary me-2"></i>Recent Login Sessions</h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for l in recent_logins %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <div class="fw-semibold text-dark"><i class="bi bi-shield-check text-success me-2"></i>Successful Staff Portal Login</div>
+                            <small class="text-muted">{{ l.description }}</small>
+                        </div>
+                        <span class="small font-monospace text-muted">{{ l.timestamp.strftime('%d-%b-%Y %H:%M') }}</span>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item py-4 text-center text-muted">
+                        No previous session records found.
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,200 @@
+/* SmartPark – Gandhipuram Custom Stylesheet
+   Palette: Dark Blue (#0F172A, #1E3A8A, #2563EB), Clean White (#FFFFFF), Accents (#10B981, #EF4444, #F59E0B)
+*/
+
+:root {
+    --primary-blue: #1E3A8A;
+    --primary-hover: #172554;
+    --accent-blue: #2563EB;
+    --dark-slate: #0F172A;
+    --light-bg: #F8FAFC;
+    --card-border: #E2E8F0;
+    --success-green: #10B981;
+    --danger-red: #EF4444;
+    --warning-yellow: #F59E0B;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--light-bg);
+    color: #1E293B;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: var(--dark-slate);
+    border-bottom: 2px solid var(--primary-blue);
+}
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #FFFFFF !important;
+}
+.navbar-brand span {
+    color: #60A5FA;
+}
+.nav-link {
+    color: #CBD5E1 !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+.nav-link:hover, .nav-link.active {
+    color: #FFFFFF !important;
+}
+
+/* Hero Section */
+.hero-banner {
+    background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 60%, #1E40AF 100%);
+    color: #FFFFFF;
+    padding: 4.5rem 0 3.5rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.hero-title {
+    font-size: 2.75rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -1px;
+}
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #BFDBFE;
+    max-width: 720px;
+}
+
+/* Metric / Stat Cards */
+.stat-card {
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+}
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Facility Cards */
+.facility-card {
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+}
+.facility-card:hover {
+    border-color: #93C5FD;
+    box-shadow: 0 12px 20px -5px rgba(30, 58, 138, 0.12);
+}
+.facility-badge {
+    background-color: #EFF6FF;
+    color: var(--accent-blue);
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #BFDBFE;
+}
+
+/* 30-Slot Layout Grid */
+.slot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+}
+.slot-tile {
+    border-radius: 8px;
+    padding: 12px 6px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: default;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+.slot-tile.available {
+    background-color: #ECFDF5;
+    color: #065F46;
+    border-color: #A7F3D0;
+    cursor: pointer;
+}
+.slot-tile.available:hover {
+    background-color: #D1FAE5;
+    border-color: #10B981;
+    transform: scale(1.05);
+}
+.slot-tile.available.selected {
+    background-color: #10B981;
+    color: #FFFFFF;
+    border-color: #047857;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+.slot-tile.occupied {
+    background-color: #FEF2F2;
+    color: #991B1B;
+    border-color: #FECACA;
+    opacity: 0.85;
+}
+.slot-tile.reserved {
+    background-color: #FFFBEB;
+    color: #92400E;
+    border-color: #FDE68A;
+}
+
+/* Legend Indicators */
+.legend-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+/* Map Elements */
+#leaflet-map {
+    width: 100%;
+    height: 560px;
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+}
+
+/* Buttons */
+.btn-primary-custom {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: #FFFFFF;
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+.btn-primary-custom:hover {
+    background-color: #1D4ED8;
+    border-color: #1D4ED8;
+    color: #FFFFFF;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background-color: var(--dark-slate);
+    color: #94A3B8;
+    border-top: 1px solid #334155;
+    padding: 2.5rem 0 1.5rem 0;
+}

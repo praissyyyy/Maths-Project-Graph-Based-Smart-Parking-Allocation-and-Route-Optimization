@@ -1,0 +1,9 @@
+stage,timestamp,event_description,total_occupied,total_available,P1_occupied,P1_available,P1_util_pct,P2_occupied,P2_available,P2_util_pct,P3_occupied,P3_available,P3_util_pct,P4_occupied,P4_available,P4_util_pct,P5_occupied,P5_available,P5_util_pct
+1,09:00 AM,Initial Parking State (Simulated Baseline),50,100,10,20,33.3,10,20,33.3,10,20,33.3,10,20,33.3,10,20,33.3
+2,09:30 AM,"Batch 1 Arrivals (30 vehicles requested, assigned via Nearest Available)",80,70,16,14,53.3,15,15,50.0,17,13,56.7,14,16,46.7,18,12,60.0
+3,10:00 AM,Occupancy Settled Post-Batch 1 Arrivals,80,70,16,14,53.3,15,15,50.0,17,13,56.7,14,16,46.7,18,12,60.0
+4,10:30 AM,Simulated Departures (-15 parked vehicles leave slots),65,85,13,17,43.3,11,19,36.7,15,15,50.0,10,20,33.3,16,14,53.3
+5,11:00 AM,Availability Updated Post-Departure (Freed 15 slots),65,85,13,17,43.3,11,19,36.7,15,15,50.0,10,20,33.3,16,14,53.3
+6,11:30 AM,Batch 2 Vehicle Requests (40 vehicles received),105,45,19,11,63.3,18,12,60.0,24,6,80.0,16,14,53.3,28,2,93.3
+7,12:00 PM,Optimal Dynamic Reallocation (MCMF algorithm applied),105,45,19,11,63.3,18,12,60.0,24,6,80.0,16,14,53.3,28,2,93.3
+8,12:30 PM,Final Parking Occupancy State (Steady State),105,45,19,11,63.3,18,12,60.0,24,6,80.0,16,14,53.3,28,2,93.3

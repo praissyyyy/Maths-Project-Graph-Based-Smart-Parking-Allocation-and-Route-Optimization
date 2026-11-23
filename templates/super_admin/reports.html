@@ -1,0 +1,78 @@
+{% extends "super_admin/layout.html" %}
+
+{% block super_content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-file-earmark-bar-graph text-primary me-2"></i>Cross-Facility Performance Reports</h4>
+                <p class="text-muted mb-0">System-wide operational benchmarks, occupancy distribution, and facility performance reports.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('super_admin.reports', type=report_type, export='true') }}" class="btn btn-success fw-semibold">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Export Performance CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Performance Matrix Table -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0 text-dark">Facility Benchmark Matrix</h6>
+        <span class="small text-muted">Gandhipuram 1,400m Road Radius</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th>Facility ID</th>
+                        <th>Facility Name</th>
+                        <th>Total Bays</th>
+                        <th>Occupied</th>
+                        <th>Reserved</th>
+                        <th>Maintenance</th>
+                        <th>Available</th>
+                        <th>Utilization Rate</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in facilities %}
+                    {% set s = facility_stats[loop.index0] %}
+                    <tr>
+                        <td class="font-monospace fw-bold text-primary">{{ s.facility_id }}</td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ s.facility_name }}</div>
+                            <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Node: {{ f.node_id }}</small>
+                        </td>
+                        <td class="fw-semibold">{{ s.capacity }}</td>
+                        <td class="text-danger fw-bold">{{ s.occupied }}</td>
+                        <td class="text-info fw-bold">{{ s.reserved }}</td>
+                        <td class="text-warning fw-bold">{{ s.maintenance }}</td>
+                        <td class="text-success fw-bold">{{ s.available }}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="progress flex-grow-1" style="height: 8px; width: 120px;">
+                                    <div class="progress-bar {% if s.utilization_pct > 80 %}bg-danger{% elif s.utilization_pct > 50 %}bg-primary{% else %}bg-success{% endif %}" style="width: {{ s.utilization_pct }}%;"></div>
+                                </div>
+                                <span class="fw-bold small">{{ s.utilization_pct }}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if f.is_active %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

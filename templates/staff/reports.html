@@ -1,0 +1,129 @@
+{% extends "staff/layout.html" %}
+
+{% block staff_content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-file-earmark-bar-graph text-primary me-2"></i>{{ title }}</h4>
+                <p class="text-muted mb-0">Detailed operational and historical booking records for {{ facility.facility_name }}.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('staff.reports', type=report_type, export='true') }}" class="btn btn-success fw-semibold">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Filter Pills -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="small fw-bold text-muted text-uppercase me-2">Report Filter:</span>
+            <a href="{{ url_for('staff.reports', type='daily') }}" class="btn btn-sm {% if report_type == 'daily' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-calendar-event me-1"></i> Today
+            </a>
+            <a href="{{ url_for('staff.reports', type='weekly') }}" class="btn btn-sm {% if report_type == 'weekly' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-calendar-range me-1"></i> Past 7 Days
+            </a>
+            <a href="{{ url_for('staff.reports', type='monthly') }}" class="btn btn-sm {% if report_type == 'monthly' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-calendar-month me-1"></i> Past 30 Days
+            </a>
+            <a href="{{ url_for('staff.reports', type='completed') }}" class="btn btn-sm {% if report_type == 'completed' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-check-circle me-1"></i> Completed
+            </a>
+            <a href="{{ url_for('staff.reports', type='cancelled') }}" class="btn btn-sm {% if report_type == 'cancelled' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-x-circle me-1"></i> Cancelled
+            </a>
+            <a href="{{ url_for('staff.reports', type='no_show') }}" class="btn btn-sm {% if report_type == 'no_show' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-person-x me-1"></i> No-Shows
+            </a>
+            <a href="{{ url_for('staff.reports', type='all') }}" class="btn btn-sm {% if report_type == 'all' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+                <i class="bi bi-list-ul me-1"></i> All Records
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Report Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0 text-dark">Records Found: <span class="badge bg-primary fs-6">{{ records|length }}</span></h6>
+        <span class="small text-muted">Facility: <strong>{{ facility.facility_id }}</strong></span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer / Driver</th>
+                        <th>Vehicle</th>
+                        <th>Assigned Bay</th>
+                        <th>Schedule Window</th>
+                        <th>Status</th>
+                        <th>Walk-In</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in records %}
+                    <tr>
+                        <td class="font-monospace fw-bold text-dark">{{ r.booking_id }}</td>
+                        <td>
+                            <div class="fw-semibold text-dark">{{ r.user.name if r.user else 'Walk-in Guest' }}</div>
+                            <small class="text-muted">{{ r.user.phone if r.user and r.user.phone else 'N/A' }}</small>
+                        </td>
+                        <td>
+                            <span class="font-monospace fw-bold">{{ r.vehicle_number }}</span>
+                            <div class="text-muted small">{{ r.vehicle_type }}</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border font-monospace">{{ r.slot.slot_number if r.slot else 'N/A' }}</span>
+                        </td>
+                        <td class="small">
+                            <div><i class="bi bi-box-arrow-in-right text-success me-1"></i>{{ r.arrival_datetime.strftime('%d-%b %H:%M') }}</div>
+                            <div class="text-muted"><i class="bi bi-box-arrow-right text-danger me-1"></i>{{ r.departure_datetime.strftime('%d-%b %H:%M') }}</div>
+                        </td>
+                        <td>
+                            {% if r.booking_status == 'CONFIRMED' %}
+                            <span class="badge bg-primary">CONFIRMED</span>
+                            {% elif r.booking_status == 'CHECKED_IN' %}
+                            <span class="badge bg-warning text-dark">CHECKED IN</span>
+                            {% elif r.booking_status == 'COMPLETED' %}
+                            <span class="badge bg-success">COMPLETED</span>
+                            {% elif r.booking_status == 'CANCELLED' %}
+                            <span class="badge bg-secondary">CANCELLED</span>
+                            {% elif r.booking_status == 'NO_SHOW' %}
+                            <span class="badge bg-dark">NO SHOW</span>
+                            {% else %}
+                            <span class="badge bg-light text-dark">{{ r.booking_status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if r.is_walkin %}
+                            <span class="badge bg-info-subtle text-info border border-info-subtle">Yes</span>
+                            {% else %}
+                            <span class="text-muted small">Online</span>
+                            {% endif %}
+                        </td>
+                        <td class="small text-muted">
+                            {{ r.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                            No booking records match the selected report filter.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

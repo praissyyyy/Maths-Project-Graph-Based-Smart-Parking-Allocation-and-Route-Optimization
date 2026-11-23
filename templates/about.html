@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}About Project & Research Methodology – SmartPark{% endblock %}
+
+{% block content %}
+<div class="bg-primary text-white py-5">
+    <div class="container">
+        <span class="badge bg-white text-primary fw-bold mb-2">M.Tech Cyber Security Academic Project</span>
+        <h1 class="display-6 fw-bold mb-2">Graph-Based Smart Car Parking Allocation and Route Optimization with Online Slot Booking for Gandhipuram, Coimbatore</h1>
+        <p class="lead mb-0 text-white-50">Course: Mathematics for Cyber Security | Comprehensive System Documentation & Methodology</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <!-- Main Academic Content -->
+        <div class="col-lg-8">
+            <!-- 1. Problem Statement -->
+            <section class="mb-5">
+                <h3 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-bullseye text-primary me-2"></i>1. Problem Statement & Motivation</h3>
+                <p>
+                    Gandhipuram is one of the most densely populated commercial and transportation epicenters in Coimbatore, Tamil Nadu, housing the central intercity bus terminal, Cross Cut Road retail corridor, 100 Feet commercial avenue, and Dr. Nanjappa Road arterial highway. Cruising for on-street parking in this zone induces severe traffic bottlenecks, exacerbates carbon emissions, and wastes driver commute time.
+                </p>
+                <p>
+                    Conventional parking solutions either rely on uncoordinated roadside cruising or naive first-come allocations that neglect network topology and system-level social travel distance. This project addresses the challenge by formulating an integrated, capacity-constrained cyber-physical smart parking architecture backed by graph-theoretic road analysis, minimum-cost maximum-flow optimization, and heuristic shortest-path routing.
+                </p>
+            </section>
+
+            <!-- 2. Road Network Graph Model -->
+            <section class="mb-5">
+                <h3 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-diagram-3-fill text-primary me-2"></i>2. Graph-Theoretic Road Network Representation</h3>
+                <p>
+                    The physical road topology of Gandhipuram is modeled as a weighted directed multigraph $G = (V, E)$, acquired from OpenStreetMap within a 1,400-meter radius centered at coordinates (11.0182714°N, 76.9677744°E):
+                </p>
+                <div class="card bg-light border p-3 mb-3">
+                    <ul class="mb-0 small">
+                        <li><strong>Vertices $V$:</strong> $1,390$ road intersections and spatial decision points with geographic attributes $(\text{lat}_u, \text{lon}_u)$.</li>
+                        <li><strong>Directed Edges $E$:</strong> $3,406$ directed road segments preserving one-way vehicular direction restrictions.</li>
+                        <li><strong>Edge Weights $w(u, v)$:</strong> Exact arc length in meters ($L_{uv} \in \mathbb{R}^+$).</li>
+                        <li><strong>Topological Robustness:</strong> Analyzed via 296 articulation points (cut vertices) and 325 bridge edges representing systemic transit bottlenecks.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 3. Mathematical Formulations of Allocation Algorithms -->
+            <section class="mb-5">
+                <h3 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-calculator-fill text-primary me-2"></i>3. Allocation Algorithms Mathematical Formulation</h3>
+
+                <h5 class="fw-bold mt-3 text-secondary">A. Minimum-Cost Maximum-Flow (MCMF) Formulation</h5>
+                <p>
+                    Let $N$ denote the set of vehicle requests and $M$ denote the set of parking facilities. We construct a flow network $F = (V_F, E_F)$ with super-source $S$ and super-sink $T$:
+                </p>
+                <div class="card bg-light border p-3 mb-3 font-monospace small">
+                    Minimize: &nbsp; &sum;<sub>i &in; N</sub> &sum;<sub>j &in; M</sub> c<sub>ij</sub> &middot; x<sub>ij</sub><br><br>
+                    Subject to:<br>
+                    &nbsp;&nbsp;&sum;<sub>j &in; M</sub> x<sub>ij</sub> &le; 1, &nbsp;&nbsp;&forall; i &in; N &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Single facility assignment per vehicle)<br>
+                    &nbsp;&nbsp;&sum;<sub>i &in; N</sub> x<sub>ij</sub> &le; A<sub>j</sub>, &nbsp;&nbsp;&forall; j &in; M &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Facility available capacity constraint)<br>
+                    &nbsp;&nbsp;x<sub>ij</sub> &in; {0, 1}, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Binary decision variable)
+                </div>
+                <p class="small text-muted">
+                    where $c_{ij}$ represents the shortest-path travel distance from vehicle $i$'s current position to facility $j$'s access node, and $A_j$ denotes the remaining available capacity of facility $j$. The network simplex algorithm guarantees total travel cost minimization while maximizing assignment cardinality.
+                </p>
+
+                <h5 class="fw-bold mt-4 text-secondary">B. Nearest Available Parking</h5>
+                <p class="small">
+                    For each sequential arrival $i$, the algorithm computes shortest-path distances $d(u_i, p_j)$ to all facilities where remaining capacity $A_j > 0$, greedily assigning $i \to \arg\min_{j : A_j > 0} d(u_i, p_j)$ and decrementing $A_j \leftarrow A_j - 1$.
+                </p>
+
+                <h5 class="fw-bold mt-4 text-secondary">C. First-Come, First-Served (FCFS)</h5>
+                <p class="small">
+                    Vehicles are processed strictly in arrival order and allocated to the first facility with $A_j > 0$ according to a fixed operational indexing (P1 &rarr; P2 &rarr; P3 &rarr; P4 &rarr; P5). This baseline models uncoordinated static zoning.
+                </p>
+            </section>
+
+            <!-- 4. Routing Optimization: Dijkstra vs A* -->
+            <section class="mb-5">
+                <h3 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-compass-fill text-primary me-2"></i>4. Shortest-Path Route Optimization</h3>
+                <p>
+                    Vehicle routing executes over directed graph $G$. We evaluate Dijkstra's priority-queue search against $A^*$ search guided by the spherical Haversine distance heuristic $h(u, v)$:
+                </p>
+                <div class="card bg-light border p-3 mb-3 small">
+                    <strong>Heuristic Admissibility & Consistency:</strong>
+                    Because the straight-line great-circle distance $d_{\text{haversine}}(u, v)$ is strictly lower-bound bounded by any physical road traversal distance ($\forall u, v: h(u, v) \le d_{\text{road}}(u, v)$ and $h(u, v) \le c(u, w) + h(w, v)$), $A^*$ is mathematically guaranteed to find the true shortest path while pruning substantial search space.
+                </div>
+            </section>
+
+            <!-- 5. Experimental Results -->
+            <section class="mb-5">
+                <h3 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-graph-up-arrow text-primary me-2"></i>5. Experimental Evaluation Summary</h3>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm small align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Demand Scenario</th>
+                                <th>Vehicles</th>
+                                <th>Algorithm</th>
+                                <th>Success Rate</th>
+                                <th>Avg Travel Distance</th>
+                                <th>Total Network Travel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td rowspan="3" class="fw-bold">Medium Demand</td>
+                                <td rowspan="3">25</td>
+                                <td>FCFS</td>
+                                <td>100.0%</td>
+                                <td>1,438.2 m</td>
+                                <td>35,955.0 m</td>
+                            </tr>
+                            <tr>
+                                <td>Nearest Available</td>
+                                <td>100.0%</td>
+                                <td>892.4 m</td>
+                                <td>22,310.0 m</td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>MCMF (Optimal)</strong></td>
+                                <td><strong>100.0%</strong></td>
+                                <td><strong>892.4 m</strong></td>
+                                <td><strong>22,310.0 m</strong></td>
+                            </tr>
+                            <tr>
+                                <td rowspan="3" class="fw-bold">High Demand</td>
+                                <td rowspan="3">45</td>
+                                <td>FCFS</td>
+                                <td>100.0%</td>
+                                <td>1,612.8 m</td>
+                                <td>72,576.0 m</td>
+                            </tr>
+                            <tr>
+                                <td>Nearest Available</td>
+                                <td>100.0%</td>
+                                <td>964.3 m</td>
+                                <td>43,393.5 m</td>
+                            </tr>
+                            <tr class="table-success">
+                                <td><strong>MCMF (Optimal)</strong></td>
+                                <td><strong>100.0%</strong></td>
+                                <td><strong>941.1 m</strong></td>
+                                <td><strong>42,349.5 m</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <small class="text-muted">
+                    <em>Finding:</em> Under high demand with uneven spatial clustering, global MCMF achieves up to <strong>41.6% reduction in total travel distance</strong> compared to FCFS, and avoids local greedy traps observed in Nearest Available.
+                </small>
+            </section>
+
+            <!-- 6. Simulation Assumptions & Limitations -->
+            <section class="mb-5">
+                <h3 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-exclamation-triangle text-warning me-2"></i>6. Simulation Assumptions & Academic Scope</h3>
+                <ul class="small text-muted">
+                    <li><strong>Simulated Parking Facilities:</strong> The 5 facilities (P1–P5) and 150 individual slots are simulated models established for academic evaluation. Their coordinates are snapped to real Gandhipuram road nodes.</li>
+                    <li><strong>Traffic Congestion:</strong> Edge costs currently reflect physical road metric distance; dynamic traffic flow and signal wait times represent future telemetry integrations.</li>
+                    <li><strong>Non-Dominance:</strong> While A* search explores ~43% fewer nodes than Dijkstra on long queries, Dijkstra is simpler for dense point-to-all calculations.</li>
+                </ul>
+            </section>
+
+            <!-- 7. Genuine Academic References -->
+            <section class="mb-4">
+                <h3 class="fw-bold text-dark border-bottom pb-2"><i class="bi bi-journal-bookmark-fill text-primary me-2"></i>7. Academic References</h3>
+                <ol class="small text-secondary">
+                    <li class="mb-2">
+                        Boeing, G. (2017). <em>OSMnx: New methods for acquiring, constructing, analyzing, and visualizing complex street networks</em>. Computers, Environment and Urban Systems, 65, 126-139. DOI: 10.1016/j.compenvurbsys.2017.05.004.
+                    </li>
+                    <li class="mb-2">
+                        Dijkstra, E. W. (1959). <em>A note on two problems in connexion with graphs</em>. Numerische Mathematik, 1(1), 269-271. DOI: 10.1007/BF01386390.
+                    </li>
+                    <li class="mb-2">
+                        Hart, P. E., Nilsson, N. J., & Raphael, B. (1968). <em>A formal basis for the heuristic determination of minimum cost paths</em>. IEEE Transactions on Systems Science and Cybernetics, 4(2), 100-107. DOI: 10.1109/TSSC.1968.300136.
+                    </li>
+                    <li class="mb-2">
+                        Ahuja, R. K., Magnanti, T. L., & Orlin, J. B. (1993). <em>Network Flows: Theory, Algorithms, and Applications</em>. Prentice Hall, Englewood Cliffs, NJ. ISBN: 978-0136175490.
+                    </li>
+                    <li class="mb-2">
+                        Lin, T., Rivano, H., & Le Mouël, F. (2017). <em>A survey of smart parking solutions</em>. IEEE Transactions on Intelligent Transportation Systems, 18(12), 3229-3253. DOI: 10.1109/TITS.2017.2685149.
+                    </li>
+                </ol>
+            </section>
+        </div>
+
+        <!-- Sidebar Summary Cards -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-4 sticky-top" style="top: 80px;">
+                <div class="card-header bg-dark text-white py-3">
+                    <h6 class="fw-bold mb-0"><i class="bi bi-mortarboard-fill text-warning me-2"></i>Project Metadata</h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Project Title:</small>
+                        <strong class="small text-dark">Graph-Based Smart Car Parking Allocation and Route Optimization</strong>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Study Target:</small>
+                        <span class="small">Gandhipuram, Coimbatore, Tamil Nadu, India</span>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted d-block">Program:</small>
+                        <span class="small badge bg-primary">M.Tech Cyber Security</span>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted d-block">Subject:</small>
+                        <span class="small text-dark">Mathematics for Cyber Security</span>
+                    </div>
+                    <hr>
+                    <h6 class="fw-bold small text-muted mb-2">Experimental Visualizations</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('map.interactive_map') }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-map me-1"></i> Open Interactive Route Map
+                        </a>
+                        <a href="{{ url_for('parking.list_facilities') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-grid-3x3 me-1"></i> Browse 30-Slot Layouts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}{{ facility.facility_name }} – SmartPark Gandhipuram{% endblock %}
+
+{% block extra_head %}
+<style>
+    .slot-tile.maintenance {
+        background-color: #F1F5F9;
+        color: #475569;
+        border-color: #94A3B8;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(148, 163, 184, 0.18) 8px, rgba(148, 163, 184, 0.18) 16px);
+        cursor: pointer;
+        opacity: 0.9;
+    }
+    .slot-tile.reserved {
+        background-color: #FFFBEB;
+        color: #92400E;
+        border-color: #F59E0B;
+        cursor: pointer;
+    }
+    .slot-tile.reserved:hover {
+        background-color: #FEF3C7;
+        border-color: #D97706;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.2);
+    }
+    .slot-tile.occupied {
+        background-color: #FEF2F2;
+        color: #991B1B;
+        border-color: #EF4444;
+        cursor: pointer;
+        opacity: 0.9;
+    }
+    .slot-tile.occupied:hover {
+        background-color: #FEE2E2;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-primary-subtle py-4 border-bottom">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <a href="{{ url_for('parking.list_facilities') }}" class="text-decoration-none small text-primary mb-1 d-inline-block">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Facilities
+                </a>
+                <h1 class="fw-bold text-slate mb-1">{{ facility.facility_name }}</h1>
+                <p class="text-muted mb-0">
+                    <i class="bi bi-geo-alt me-1"></i> Gandhipuram, Coimbatore | 
+                    Road Network Node ID: <code>{{ facility.node_id }}</code> |
+                    Coordinates: <code>{{ "%.5f"|format(facility.latitude) }}, {{ "%.5f"|format(facility.longitude) }}</code>
+                </p>
+            </div>
+            <div>
+                <a href="{{ url_for('booking.new_booking', facility_id=facility.facility_id, arrival=filter_arrival if is_filtered else '', departure=filter_departure if is_filtered else '') }}" class="btn btn-primary-custom">
+                    <i class="bi bi-bookmark-plus me-1"></i> Book Slot Here
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4">
+    <!-- Facility Overview Metrics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-card p-3 border rounded-3 bg-white shadow-sm text-center">
+                <small class="text-muted fw-semibold text-uppercase" style="font-size:0.75rem;">Total Capacity</small>
+                <h3 class="fw-bold text-dark my-1">{{ stats.capacity }}</h3>
+                <span class="small text-muted">Slots</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-card p-3 border rounded-3 bg-white shadow-sm text-center border-bottom border-danger border-3">
+                <small class="text-muted fw-semibold text-uppercase" style="font-size:0.75rem;">Currently Occupied</small>
+                <h3 class="fw-bold text-danger my-1">{{ stats.occupied }}</h3>
+                <span class="small text-danger fw-semibold">On Bay (Red)</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-card p-3 border rounded-3 bg-white shadow-sm text-center border-bottom border-warning border-3">
+                <small class="text-muted fw-semibold text-uppercase" style="font-size:0.75rem;">Currently Reserved</small>
+                <h3 class="fw-bold text-warning my-1">{{ stats.reserved }}</h3>
+                <span class="small text-warning-emphasis fw-semibold">Booked (Yellow)</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-card p-3 border rounded-3 bg-white shadow-sm text-center border-bottom border-secondary border-3">
+                <small class="text-muted fw-semibold text-uppercase" style="font-size:0.75rem;">Maintenance</small>
+                <h3 class="fw-bold text-secondary my-1">{{ stats.maintenance }}</h3>
+                <span class="small text-muted">Unavailable</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-card p-3 border rounded-3 bg-white shadow-sm text-center border-bottom border-success border-3">
+                <small class="text-muted fw-semibold text-uppercase" style="font-size:0.75rem;">Available to Book</small>
+                <h3 class="fw-bold text-success my-1">{{ stats.available }}</h3>
+                <span class="small text-success fw-semibold">Open (Green)</span>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6">
+            <div class="stat-card p-3 border rounded-3 bg-white shadow-sm text-center border-bottom border-primary border-3">
+                <small class="text-muted fw-semibold text-uppercase" style="font-size:0.75rem;">Utilisation</small>
+                <h3 class="fw-bold text-primary my-1">{{ stats.utilization_pct }}%</h3>
+                <span class="small text-muted">Occupancy Rate</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reservation Schedule & Time Filter Card -->
+    <div class="card shadow-sm border-0 mb-4 bg-white">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h6 class="fw-bold mb-0 text-dark">
+                <i class="bi bi-clock-history text-primary me-2"></i>Temporal Availability &amp; Reservation Window
+            </h6>
+            <div>
+                {% if is_filtered %}
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1">
+                    <i class="bi bi-funnel-fill me-1"></i> Viewing Filtered Time Window
+                </span>
+                {% else %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1">
+                    <i class="bi bi-broadcast me-1"></i> Live Real-Time Overview
+                </span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body p-3">
+            <form id="timeFilterForm" method="GET" action="{{ url_for('parking.facility_details', facility_id=facility.facility_id) }}" class="row g-2 align-items-end">
+                <div class="col-lg-4 col-md-5">
+                    <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-event me-1 text-primary"></i> Planned Arrival Date &amp; Time</label>
+                    <input type="datetime-local" id="filterArrival" name="arrival" class="form-control" value="{{ filter_arrival }}" required>
+                </div>
+                <div class="col-lg-4 col-md-5">
+                    <label class="form-label small fw-bold text-muted mb-1"><i class="bi bi-calendar-check me-1 text-danger"></i> Planned Departure Date &amp; Time</label>
+                    <input type="datetime-local" id="filterDeparture" name="departure" class="form-control" value="{{ filter_departure }}" required>
+                </div>
+                <div class="col-lg-4 col-md-2 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-custom flex-grow-1">
+                        <i class="bi bi-search me-1"></i> Check Window
+                    </button>
+                    {% if is_filtered %}
+                    <a href="{{ url_for('parking.facility_details', facility_id=facility.facility_id) }}" class="btn btn-outline-secondary" title="Reset to live overview">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+            <div class="form-text small text-muted mt-2">
+                <i class="bi bi-info-circle me-1"></i> Select your arrival and departure times above to verify slot availability for your specific reservation schedule. Slots support multiple non-overlapping bookings throughout the day.
+            </div>
+        </div>
+    </div>
+
+    <!-- Individual Parking Slot Layout -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-grid-3x3 me-2 text-primary"></i>Individual Parking Slot Layout ({{ slots|length }} Slots)</h5>
+                <small class="text-muted">Click any green slot to reserve, or click reserved/occupied slots to view schedule information.</small>
+            </div>
+            <!-- Legend Indicators -->
+            <div class="d-flex gap-2 flex-wrap">
+                <span class="legend-pill" style="background-color: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0;">
+                    <i class="bi bi-circle-fill text-success" style="font-size: 8px;"></i> Available (Green)
+                </span>
+                <span class="legend-pill" style="background-color: #FFFBEB; color: #92400E; border: 1px solid #FDE68A;">
+                    <i class="bi bi-circle-fill text-warning" style="font-size: 8px;"></i> Reserved (Yellow)
+                </span>
+                <span class="legend-pill" style="background-color: #FEF2F2; color: #991B1B; border: 1px solid #FECACA;">
+                    <i class="bi bi-circle-fill text-danger" style="font-size: 8px;"></i> Occupied (Red)
+                </span>
+                <span class="legend-pill" style="background-color: #F1F5F9; color: #475569; border: 1px solid #CBD5E1;">
+                    <i class="bi bi-tools text-secondary" style="font-size: 9px;"></i> Maintenance (Gray)
+                </span>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="slot-grid">
+                {% for slot in slots %}
+                    <div class="slot-tile {{ slot.status }} {% if slot.selectable %}selectable-slot{% endif %}"
+                         data-slot-id="{{ slot.slot_id }}"
+                         data-slot-number="{{ slot.slot_number }}"
+                         data-status="{{ slot.status }}"
+                         data-maintenance-reason="{{ slot.maintenance_reason or 'Scheduled engineering maintenance' }}"
+                         {% if slot.reservation_window %}
+                         data-res-arrival="{{ slot.reservation_window.arrival }}"
+                         data-res-departure="{{ slot.reservation_window.departure }}"
+                         data-res-id="{{ slot.reservation_window.booking_id }}"
+                         {% endif %}>
+                        <div class="slot-num mb-1">{{ slot.slot_number }}</div>
+                        <div class="small text-uppercase fw-semibold" style="font-size: 0.68rem;">
+                            {% if slot.status == 'available' %}
+                                <i class="bi bi-check-circle-fill text-success"></i> Free
+                            {% elif slot.status == 'occupied' %}
+                                <i class="bi bi-slash-circle-fill text-danger"></i> Occupied
+                            {% elif slot.status == 'reserved' %}
+                                <i class="bi bi-clock-fill text-warning"></i> Reserved
+                            {% else %}
+                                <i class="bi bi-tools text-secondary"></i> Maint
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Slot Selection Action Bar -->
+            <div id="selection-action-bar" class="mt-4 p-3 bg-light rounded-3 border d-none align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <span class="text-muted me-2">Selected Available Slot:</span>
+                    <strong id="selected-slot-display" class="fs-5 text-primary"></strong>
+                    <span class="badge bg-success ms-2"><i class="bi bi-check-circle me-1"></i>Available for Reservation</span>
+                </div>
+                <a id="book-selected-btn" href="#" class="btn btn-primary-custom px-4">
+                    <i class="bi bi-calendar-check me-1"></i> Proceed to Book This Slot
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slot Details Modal (for Reserved, Occupied, or Maintenance slots) -->
+<div class="modal fade" id="slotInfoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-start border-0 shadow">
+            <div class="modal-header" id="modalHeader">
+                <h5 class="modal-title fw-bold" id="modalTitle">Slot Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4" id="modalBody">
+                <!-- Injected via JavaScript -->
+            </div>
+            <div class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectableSlots = document.querySelectorAll('.selectable-slot');
+    const allSlots = document.querySelectorAll('.slot-tile');
+    const actionBar = document.getElementById('selection-action-bar');
+    const displaySpan = document.getElementById('selected-slot-display');
+    const bookBtn = document.getElementById('book-selected-btn');
+    const facilityId = "{{ facility.facility_id }}";
+    const filterArrival = "{{ filter_arrival }}";
+    const filterDeparture = "{{ filter_departure }}";
+    const isFiltered = {{ 'true' if is_filtered else 'false' }};
+
+    const slotInfoModal = new bootstrap.Modal(document.getElementById('slotInfoModal'));
+    const modalHeader = document.getElementById('modalHeader');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+
+    // Handle clicks on all slots
+    allSlots.forEach(slot => {
+        slot.addEventListener('click', function() {
+            const status = this.getAttribute('data-status');
+            const slotNumber = this.getAttribute('data-slot-number');
+            const slotId = this.getAttribute('data-slot-id');
+
+            if (status === 'available') {
+                // Select available slot
+                allSlots.forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+
+                displaySpan.textContent = slotNumber;
+                let bookUrl = `/booking/new?facility_id=${encodeURIComponent(facilityId)}&slot_id=${encodeURIComponent(slotId)}`;
+                if (isFiltered) {
+                    bookUrl += `&arrival=${encodeURIComponent(filterArrival)}&departure=${encodeURIComponent(filterDeparture)}`;
+                }
+                bookBtn.href = bookUrl;
+                actionBar.classList.remove('d-none');
+                actionBar.classList.add('d-flex');
+            } else if (status === 'reserved') {
+                // Show reservation info modal
+                modalHeader.className = 'modal-header bg-warning-subtle text-warning-emphasis border-warning-subtle';
+                modalTitle.innerHTML = `<i class="bi bi-clock-history me-2"></i>Slot ${slotNumber} – Reserved`;
+                const arr = this.getAttribute('data-res-arrival') || 'Upcoming reservation';
+                const dep = this.getAttribute('data-res-departure') || 'Upcoming departure';
+                const resId = this.getAttribute('data-res-id') || 'SPK-...';
+
+                modalBody.innerHTML = `
+                    <div class="alert alert-warning border-warning-subtle mb-3">
+                        <h6 class="fw-bold mb-1"><i class="bi bi-info-circle-fill me-1"></i>Active / Upcoming Reservation</h6>
+                        This slot is confirmed and held for a scheduled vehicle.
+                    </div>
+                    <div class="bg-light p-3 rounded-3 border mb-3">
+                        <div class="row g-2 small">
+                            <div class="col-6 text-muted">Slot Identifier:</div>
+                            <div class="col-6 fw-bold font-monospace">${slotNumber}</div>
+                            <div class="col-6 text-muted">Arrival Window:</div>
+                            <div class="col-6 fw-semibold text-dark">${arr}</div>
+                            <div class="col-6 text-muted">Departure Window:</div>
+                            <div class="col-6 fw-semibold text-dark">${dep}</div>
+                            <div class="col-6 text-muted">Booking Reference:</div>
+                            <div class="col-6 font-monospace text-muted">${resId}</div>
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-lightbulb text-warning me-1"></i>
+                        To reserve this slot for a different time window, use the time filter above to select a non-overlapping period, or choose any free slot marked in <strong>Green</strong>.
+                    </p>
+                `;
+                slotInfoModal.show();
+            } else if (status === 'occupied') {
+                modalHeader.className = 'modal-header bg-danger-subtle text-danger border-danger-subtle';
+                modalTitle.innerHTML = `<i class="bi bi-slash-circle me-2"></i>Slot ${slotNumber} – Physically Occupied`;
+                modalBody.innerHTML = `
+                    <div class="alert alert-danger border-danger-subtle mb-3">
+                        <h6 class="fw-bold mb-1"><i class="bi bi-car-front-fill me-1"></i>Vehicle Currently Parked</h6>
+                        This bay is currently in use by an active vehicle on site.
+                    </div>
+                    <p class="text-muted small mb-0">
+                        The slot will automatically return to <strong>Available (Green)</strong> once the vehicle completes exit check-out at the gate and no future reservation overlaps. Please select an available green slot.
+                    </p>
+                `;
+                slotInfoModal.show();
+            } else if (status === 'maintenance') {
+                modalHeader.className = 'modal-header bg-secondary text-white';
+                modalTitle.innerHTML = `<i class="bi bi-tools me-2"></i>Slot ${slotNumber} – Maintenance Block`;
+                const reason = this.getAttribute('data-maintenance-reason');
+                modalBody.innerHTML = `
+                    <div class="alert alert-secondary mb-3">
+                        <h6 class="fw-bold mb-1"><i class="bi bi-cone-striped me-1"></i>Temporarily Unavailable</h6>
+                        This parking slot has been locked for inspection by facility attendants.
+                    </div>
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <small class="text-muted d-block">Reported Maintenance Reason:</small>
+                        <strong class="text-dark">${reason}</strong>
+                    </div>
+                    <p class="text-muted small mb-0">
+                        Attendants will restore this bay to service as soon as engineering checks conclude.
+                    </p>
+                `;
+                slotInfoModal.show();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

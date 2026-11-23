@@ -1,0 +1,167 @@
+{% extends "staff/layout.html" %}
+
+{% block staff_content %}
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-grid-3x3 me-2 text-primary"></i>Parking Slot Management (Facility: {{ facility.facility_id }})</h5>
+            <small class="text-muted">Manage real-time states, maintenance blocking, and slot assignments for 30 individual bays.</small>
+        </div>
+        <!-- Legend Indicator -->
+        <div class="d-flex flex-wrap gap-2">
+            <span class="badge" style="background-color: #10B981; color: white;">
+                <i class="bi bi-check-circle-fill me-1"></i> Available (Green)
+            </span>
+            <span class="badge" style="background-color: #EF4444; color: white;">
+                <i class="bi bi-car-front-fill me-1"></i> Occupied (Red)
+            </span>
+            <span class="badge" style="background-color: #2563EB; color: white;">
+                <i class="bi bi-bookmark-fill me-1"></i> Reserved (Blue)
+            </span>
+            <span class="badge" style="background-color: #F59E0B; color: white;">
+                <i class="bi bi-cone-striped me-1"></i> Maintenance (Yellow)
+            </span>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <!-- Search and Filter Bar -->
+        <form method="GET" action="{{ url_for('staff.slots_management') }}" class="row g-2 align-items-center mb-4">
+            <div class="col-md-5 col-12">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search_slot" class="form-control" placeholder="Search by Slot Number (e.g. {{ facility.facility_id }}-S05)" value="{{ search_slot }}">
+                </div>
+            </div>
+            <div class="col-md-4 col-8">
+                <select name="status_filter" class="form-select">
+                    <option value="ALL" {% if status_filter == 'ALL' %}selected{% endif %}>All Slot Statuses</option>
+                    <option value="AVAILABLE" {% if status_filter == 'AVAILABLE' %}selected{% endif %}>🟢 Available Only</option>
+                    <option value="OCCUPIED" {% if status_filter == 'OCCUPIED' %}selected{% endif %}>🔴 Occupied Only</option>
+                    <option value="RESERVED" {% if status_filter == 'RESERVED' %}selected{% endif %}>🔵 Reserved Only</option>
+                    <option value="MAINTENANCE" {% if status_filter == 'MAINTENANCE' %}selected{% endif %}>🟡 Under Maintenance</option>
+                </select>
+            </div>
+            <div class="col-md-3 col-4">
+                <button type="submit" class="btn btn-primary-custom w-100">Filter Slots</button>
+            </div>
+        </form>
+
+        <!-- 30-Slot Visual Floor Plan -->
+        <div class="row g-3">
+            {% for s in slots %}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                    <div class="card h-100 border text-center p-3 slot-management-card position-relative
+                        {% if s.status == 'available' %}border-success bg-success-subtle text-success-emphasis
+                        {% elif s.status == 'occupied' %}border-danger bg-danger-subtle text-danger-emphasis
+                        {% elif s.status == 'reserved' %}border-primary bg-primary-subtle text-primary-emphasis
+                        {% else %}border-warning bg-warning-subtle text-warning-emphasis{% endif %}">
+
+                        <div class="fw-bold fs-5 mb-1">{{ s.slot_number }}</div>
+
+                        <!-- Status Badge -->
+                        <div class="mb-2">
+                            {% if s.status == 'available' %}
+                                <span class="badge bg-success">Available</span>
+                            {% elif s.status == 'occupied' %}
+                                <span class="badge bg-danger">Occupied</span>
+                            {% elif s.status == 'reserved' %}
+                                <span class="badge bg-primary">Reserved</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Maintenance</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Active vehicle details if present -->
+                        <div class="small mb-3" style="min-height: 40px; font-size: 0.75rem;">
+                            {% if s.active_booking %}
+                                <div class="fw-bold">{{ s.active_booking.vehicle_number }}</div>
+                                <div class="text-muted">{{ s.active_booking.booking_id }}</div>
+                            {% elif s.status == 'maintenance' %}
+                                <div class="text-muted text-truncate" title="{{ s.maintenance_reason }}">{{ s.maintenance_reason or 'Inspection' }}</div>
+                            {% else %}
+                                <div class="text-muted">Empty Bay</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Action Button trigger modal -->
+                        <button type="button" class="btn btn-sm btn-outline-dark w-100 mt-auto"
+                                data-bs-toggle="modal" data-bs-target="#slotModal{{ s.slot_id }}">
+                            <i class="bi bi-gear-fill me-1"></i> Manage
+                        </button>
+                    </div>
+
+                    <!-- Manage Slot Modal -->
+                    <div class="modal fade" id="slotModal{{ s.slot_id }}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered text-start">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title fw-bold">Manage Slot {{ s.slot_number }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3 p-3 bg-light rounded-3 border">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-muted">Current System Status:</span>
+                                            <strong>{{ s.status|upper }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="text-muted">Manual Override Mode:</span>
+                                            <span>{{ s.manual_status }}</span>
+                                        </div>
+                                        {% if s.active_booking %}
+                                            <hr class="my-2">
+                                            <div class="text-primary fw-bold">Active Booking Details:</div>
+                                            <div class="small">Ref ID: <strong>{{ s.active_booking.booking_id }}</strong></div>
+                                            <div class="small">Vehicle: <strong>{{ s.active_booking.vehicle_number }}</strong> ({{ s.active_booking.vehicle_type }})</div>
+                                            <div class="small">Customer: {{ s.active_booking.user.name if s.active_booking.user else 'Guest' }}</div>
+                                            <div class="small">Arrival: {{ s.active_booking.arrival_datetime.strftime('%d-%b %H:%M') }}</div>
+                                            <div class="small">Departure: {{ s.active_booking.departure_datetime.strftime('%d-%b %H:%M') }}</div>
+                                        {% endif %}
+                                    </div>
+
+                                    <form method="POST" action="{{ url_for('staff.update_slot_status') }}" onsubmit="return confirm('Confirm updating status for slot {{ s.slot_number }}?');">
+                                        <input type="hidden" name="slot_id" value="{{ s.slot_id }}">
+
+                                        <label class="form-label fw-semibold">Update Status Action:</label>
+                                        <select name="new_status" class="form-select mb-3" id="selectStatus{{ s.slot_id }}" onchange="toggleReasonField('{{ s.slot_id }}')">
+                                            <option value="AUTO" {% if s.manual_status == 'AUTO' %}selected{% endif %}>Automated (Default Schedule Logic)</option>
+                                            <option value="AVAILABLE" {% if s.manual_status == 'AVAILABLE' %}selected{% endif %}>Mark as Available (Free)</option>
+                                            <option value="OCCUPIED" {% if s.manual_status == 'OCCUPIED' %}selected{% endif %}>Mark as Occupied (Vehicle Present)</option>
+                                            <option value="RESERVED" {% if s.manual_status == 'RESERVED' %}selected{% endif %}>Reserve / Block Slot</option>
+                                            <option value="MAINTENANCE" {% if s.manual_status == 'MAINTENANCE' %}selected{% endif %}>Mark Temporarily Unavailable (Maintenance)</option>
+                                        </select>
+
+                                        <div class="mb-3 {% if s.manual_status != 'MAINTENANCE' %}d-none{% endif %}" id="reasonBox{{ s.slot_id }}">
+                                            <label class="form-label fw-semibold">Reason for Maintenance:</label>
+                                            <input type="text" name="reason" class="form-control" placeholder="e.g. Sensor repair, line repainting" value="{{ s.maintenance_reason or '' }}">
+                                        </div>
+
+                                        <div class="modal-footer px-0 pb-0">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary-custom">Apply Status Change</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleReasonField(slotId) {
+    const select = document.getElementById('selectStatus' + slotId);
+    const reasonBox = document.getElementById('reasonBox' + slotId);
+    if (select.value === 'MAINTENANCE') {
+        reasonBox.classList.remove('d-none');
+    } else {
+        reasonBox.classList.add('d-none');
+    }
+}
+</script>
+{% endblock %}

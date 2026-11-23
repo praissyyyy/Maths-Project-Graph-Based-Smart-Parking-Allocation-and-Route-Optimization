@@ -1,0 +1,967 @@
+[
+    {
+        "facility_id": "P1",
+        "facility_name": "P1 - Cross Cut Road Commercial Parking",
+        "node_id": "1482456195",
+        "latitude": 11.0171284,
+        "longitude": 76.9648307,
+        "total_capacity": 30,
+        "initial_occupied": 10,
+        "available_spaces": 20,
+        "description": "Multi-tier commercial parking hub serving Cross Cut Road retail district.",
+        "slots": [
+            {
+                "slot_id": "P1_01",
+                "facility_id": "P1",
+                "slot_number": "P1-S01",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_02",
+                "facility_id": "P1",
+                "slot_number": "P1-S02",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_03",
+                "facility_id": "P1",
+                "slot_number": "P1-S03",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_04",
+                "facility_id": "P1",
+                "slot_number": "P1-S04",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_05",
+                "facility_id": "P1",
+                "slot_number": "P1-S05",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_06",
+                "facility_id": "P1",
+                "slot_number": "P1-S06",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_07",
+                "facility_id": "P1",
+                "slot_number": "P1-S07",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_08",
+                "facility_id": "P1",
+                "slot_number": "P1-S08",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_09",
+                "facility_id": "P1",
+                "slot_number": "P1-S09",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_10",
+                "facility_id": "P1",
+                "slot_number": "P1-S10",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P1_11",
+                "facility_id": "P1",
+                "slot_number": "P1-S11",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_12",
+                "facility_id": "P1",
+                "slot_number": "P1-S12",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_13",
+                "facility_id": "P1",
+                "slot_number": "P1-S13",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_14",
+                "facility_id": "P1",
+                "slot_number": "P1-S14",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_15",
+                "facility_id": "P1",
+                "slot_number": "P1-S15",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_16",
+                "facility_id": "P1",
+                "slot_number": "P1-S16",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_17",
+                "facility_id": "P1",
+                "slot_number": "P1-S17",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_18",
+                "facility_id": "P1",
+                "slot_number": "P1-S18",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_19",
+                "facility_id": "P1",
+                "slot_number": "P1-S19",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_20",
+                "facility_id": "P1",
+                "slot_number": "P1-S20",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_21",
+                "facility_id": "P1",
+                "slot_number": "P1-S21",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_22",
+                "facility_id": "P1",
+                "slot_number": "P1-S22",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_23",
+                "facility_id": "P1",
+                "slot_number": "P1-S23",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_24",
+                "facility_id": "P1",
+                "slot_number": "P1-S24",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_25",
+                "facility_id": "P1",
+                "slot_number": "P1-S25",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_26",
+                "facility_id": "P1",
+                "slot_number": "P1-S26",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_27",
+                "facility_id": "P1",
+                "slot_number": "P1-S27",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_28",
+                "facility_id": "P1",
+                "slot_number": "P1-S28",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_29",
+                "facility_id": "P1",
+                "slot_number": "P1-S29",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P1_30",
+                "facility_id": "P1",
+                "slot_number": "P1-S30",
+                "initial_status": "available"
+            }
+        ]
+    },
+    {
+        "facility_id": "P2",
+        "facility_name": "P2 - 100 Feet Road Multi-Level Parking",
+        "node_id": "1473774412",
+        "latitude": 11.0225636,
+        "longitude": 76.9688257,
+        "total_capacity": 30,
+        "initial_occupied": 10,
+        "available_spaces": 20,
+        "description": "Modern automated facility on 100 Feet Road commercial corridor.",
+        "slots": [
+            {
+                "slot_id": "P2_01",
+                "facility_id": "P2",
+                "slot_number": "P2-S01",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_02",
+                "facility_id": "P2",
+                "slot_number": "P2-S02",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_03",
+                "facility_id": "P2",
+                "slot_number": "P2-S03",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_04",
+                "facility_id": "P2",
+                "slot_number": "P2-S04",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_05",
+                "facility_id": "P2",
+                "slot_number": "P2-S05",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_06",
+                "facility_id": "P2",
+                "slot_number": "P2-S06",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_07",
+                "facility_id": "P2",
+                "slot_number": "P2-S07",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_08",
+                "facility_id": "P2",
+                "slot_number": "P2-S08",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_09",
+                "facility_id": "P2",
+                "slot_number": "P2-S09",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_10",
+                "facility_id": "P2",
+                "slot_number": "P2-S10",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P2_11",
+                "facility_id": "P2",
+                "slot_number": "P2-S11",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_12",
+                "facility_id": "P2",
+                "slot_number": "P2-S12",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_13",
+                "facility_id": "P2",
+                "slot_number": "P2-S13",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_14",
+                "facility_id": "P2",
+                "slot_number": "P2-S14",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_15",
+                "facility_id": "P2",
+                "slot_number": "P2-S15",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_16",
+                "facility_id": "P2",
+                "slot_number": "P2-S16",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_17",
+                "facility_id": "P2",
+                "slot_number": "P2-S17",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_18",
+                "facility_id": "P2",
+                "slot_number": "P2-S18",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_19",
+                "facility_id": "P2",
+                "slot_number": "P2-S19",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_20",
+                "facility_id": "P2",
+                "slot_number": "P2-S20",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_21",
+                "facility_id": "P2",
+                "slot_number": "P2-S21",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_22",
+                "facility_id": "P2",
+                "slot_number": "P2-S22",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_23",
+                "facility_id": "P2",
+                "slot_number": "P2-S23",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_24",
+                "facility_id": "P2",
+                "slot_number": "P2-S24",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_25",
+                "facility_id": "P2",
+                "slot_number": "P2-S25",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_26",
+                "facility_id": "P2",
+                "slot_number": "P2-S26",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_27",
+                "facility_id": "P2",
+                "slot_number": "P2-S27",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_28",
+                "facility_id": "P2",
+                "slot_number": "P2-S28",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_29",
+                "facility_id": "P2",
+                "slot_number": "P2-S29",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P2_30",
+                "facility_id": "P2",
+                "slot_number": "P2-S30",
+                "initial_status": "available"
+            }
+        ]
+    },
+    {
+        "facility_id": "P3",
+        "facility_name": "P3 - Bharathiar Road Express Parking",
+        "node_id": "12375018437",
+        "latitude": 11.0136264,
+        "longitude": 76.9683017,
+        "total_capacity": 30,
+        "initial_occupied": 10,
+        "available_spaces": 20,
+        "description": "Transit parking adjacent to Bharathiar Road and central junction.",
+        "slots": [
+            {
+                "slot_id": "P3_01",
+                "facility_id": "P3",
+                "slot_number": "P3-S01",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_02",
+                "facility_id": "P3",
+                "slot_number": "P3-S02",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_03",
+                "facility_id": "P3",
+                "slot_number": "P3-S03",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_04",
+                "facility_id": "P3",
+                "slot_number": "P3-S04",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_05",
+                "facility_id": "P3",
+                "slot_number": "P3-S05",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_06",
+                "facility_id": "P3",
+                "slot_number": "P3-S06",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_07",
+                "facility_id": "P3",
+                "slot_number": "P3-S07",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_08",
+                "facility_id": "P3",
+                "slot_number": "P3-S08",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_09",
+                "facility_id": "P3",
+                "slot_number": "P3-S09",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_10",
+                "facility_id": "P3",
+                "slot_number": "P3-S10",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P3_11",
+                "facility_id": "P3",
+                "slot_number": "P3-S11",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_12",
+                "facility_id": "P3",
+                "slot_number": "P3-S12",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_13",
+                "facility_id": "P3",
+                "slot_number": "P3-S13",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_14",
+                "facility_id": "P3",
+                "slot_number": "P3-S14",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_15",
+                "facility_id": "P3",
+                "slot_number": "P3-S15",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_16",
+                "facility_id": "P3",
+                "slot_number": "P3-S16",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_17",
+                "facility_id": "P3",
+                "slot_number": "P3-S17",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_18",
+                "facility_id": "P3",
+                "slot_number": "P3-S18",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_19",
+                "facility_id": "P3",
+                "slot_number": "P3-S19",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_20",
+                "facility_id": "P3",
+                "slot_number": "P3-S20",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_21",
+                "facility_id": "P3",
+                "slot_number": "P3-S21",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_22",
+                "facility_id": "P3",
+                "slot_number": "P3-S22",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_23",
+                "facility_id": "P3",
+                "slot_number": "P3-S23",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_24",
+                "facility_id": "P3",
+                "slot_number": "P3-S24",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_25",
+                "facility_id": "P3",
+                "slot_number": "P3-S25",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_26",
+                "facility_id": "P3",
+                "slot_number": "P3-S26",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_27",
+                "facility_id": "P3",
+                "slot_number": "P3-S27",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_28",
+                "facility_id": "P3",
+                "slot_number": "P3-S28",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_29",
+                "facility_id": "P3",
+                "slot_number": "P3-S29",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P3_30",
+                "facility_id": "P3",
+                "slot_number": "P3-S30",
+                "initial_status": "available"
+            }
+        ]
+    },
+    {
+        "facility_id": "P4",
+        "facility_name": "P4 - Dr. Nanjappa Road Central Parking",
+        "node_id": "9179381858",
+        "latitude": 11.0182996,
+        "longitude": 76.9722689,
+        "total_capacity": 30,
+        "initial_occupied": 10,
+        "available_spaces": 20,
+        "description": "High-volume parking complex serving Gandhipuram Central Bus Stand zone.",
+        "slots": [
+            {
+                "slot_id": "P4_01",
+                "facility_id": "P4",
+                "slot_number": "P4-S01",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_02",
+                "facility_id": "P4",
+                "slot_number": "P4-S02",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_03",
+                "facility_id": "P4",
+                "slot_number": "P4-S03",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_04",
+                "facility_id": "P4",
+                "slot_number": "P4-S04",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_05",
+                "facility_id": "P4",
+                "slot_number": "P4-S05",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_06",
+                "facility_id": "P4",
+                "slot_number": "P4-S06",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_07",
+                "facility_id": "P4",
+                "slot_number": "P4-S07",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_08",
+                "facility_id": "P4",
+                "slot_number": "P4-S08",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_09",
+                "facility_id": "P4",
+                "slot_number": "P4-S09",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_10",
+                "facility_id": "P4",
+                "slot_number": "P4-S10",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P4_11",
+                "facility_id": "P4",
+                "slot_number": "P4-S11",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_12",
+                "facility_id": "P4",
+                "slot_number": "P4-S12",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_13",
+                "facility_id": "P4",
+                "slot_number": "P4-S13",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_14",
+                "facility_id": "P4",
+                "slot_number": "P4-S14",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_15",
+                "facility_id": "P4",
+                "slot_number": "P4-S15",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_16",
+                "facility_id": "P4",
+                "slot_number": "P4-S16",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_17",
+                "facility_id": "P4",
+                "slot_number": "P4-S17",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_18",
+                "facility_id": "P4",
+                "slot_number": "P4-S18",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_19",
+                "facility_id": "P4",
+                "slot_number": "P4-S19",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_20",
+                "facility_id": "P4",
+                "slot_number": "P4-S20",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_21",
+                "facility_id": "P4",
+                "slot_number": "P4-S21",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_22",
+                "facility_id": "P4",
+                "slot_number": "P4-S22",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_23",
+                "facility_id": "P4",
+                "slot_number": "P4-S23",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_24",
+                "facility_id": "P4",
+                "slot_number": "P4-S24",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_25",
+                "facility_id": "P4",
+                "slot_number": "P4-S25",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_26",
+                "facility_id": "P4",
+                "slot_number": "P4-S26",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_27",
+                "facility_id": "P4",
+                "slot_number": "P4-S27",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_28",
+                "facility_id": "P4",
+                "slot_number": "P4-S28",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_29",
+                "facility_id": "P4",
+                "slot_number": "P4-S29",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P4_30",
+                "facility_id": "P4",
+                "slot_number": "P4-S30",
+                "initial_status": "available"
+            }
+        ]
+    },
+    {
+        "facility_id": "P5",
+        "facility_name": "P5 - Sathy Road Highway Transit Parking",
+        "node_id": "12374998234",
+        "latitude": 11.0249518,
+        "longitude": 76.9627064,
+        "total_capacity": 30,
+        "initial_occupied": 10,
+        "available_spaces": 20,
+        "description": "Northbound peripheral transit parking off Sathyamangalam National Highway.",
+        "slots": [
+            {
+                "slot_id": "P5_01",
+                "facility_id": "P5",
+                "slot_number": "P5-S01",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_02",
+                "facility_id": "P5",
+                "slot_number": "P5-S02",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_03",
+                "facility_id": "P5",
+                "slot_number": "P5-S03",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_04",
+                "facility_id": "P5",
+                "slot_number": "P5-S04",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_05",
+                "facility_id": "P5",
+                "slot_number": "P5-S05",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_06",
+                "facility_id": "P5",
+                "slot_number": "P5-S06",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_07",
+                "facility_id": "P5",
+                "slot_number": "P5-S07",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_08",
+                "facility_id": "P5",
+                "slot_number": "P5-S08",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_09",
+                "facility_id": "P5",
+                "slot_number": "P5-S09",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_10",
+                "facility_id": "P5",
+                "slot_number": "P5-S10",
+                "initial_status": "occupied"
+            },
+            {
+                "slot_id": "P5_11",
+                "facility_id": "P5",
+                "slot_number": "P5-S11",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_12",
+                "facility_id": "P5",
+                "slot_number": "P5-S12",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_13",
+                "facility_id": "P5",
+                "slot_number": "P5-S13",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_14",
+                "facility_id": "P5",
+                "slot_number": "P5-S14",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_15",
+                "facility_id": "P5",
+                "slot_number": "P5-S15",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_16",
+                "facility_id": "P5",
+                "slot_number": "P5-S16",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_17",
+                "facility_id": "P5",
+                "slot_number": "P5-S17",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_18",
+                "facility_id": "P5",
+                "slot_number": "P5-S18",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_19",
+                "facility_id": "P5",
+                "slot_number": "P5-S19",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_20",
+                "facility_id": "P5",
+                "slot_number": "P5-S20",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_21",
+                "facility_id": "P5",
+                "slot_number": "P5-S21",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_22",
+                "facility_id": "P5",
+                "slot_number": "P5-S22",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_23",
+                "facility_id": "P5",
+                "slot_number": "P5-S23",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_24",
+                "facility_id": "P5",
+                "slot_number": "P5-S24",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_25",
+                "facility_id": "P5",
+                "slot_number": "P5-S25",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_26",
+                "facility_id": "P5",
+                "slot_number": "P5-S26",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_27",
+                "facility_id": "P5",
+                "slot_number": "P5-S27",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_28",
+                "facility_id": "P5",
+                "slot_number": "P5-S28",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_29",
+                "facility_id": "P5",
+                "slot_number": "P5-S29",
+                "initial_status": "available"
+            },
+            {
+                "slot_id": "P5_30",
+                "facility_id": "P5",
+                "slot_number": "P5-S30",
+                "initial_status": "available"
+            }
+        ]
+    }
+]

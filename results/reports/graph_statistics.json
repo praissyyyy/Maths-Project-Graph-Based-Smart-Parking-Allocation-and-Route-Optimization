@@ -1,0 +1,22 @@
+{
+    "vertices_count": 1390,
+    "directed_edges_count": 3406,
+    "undirected_edges_count": 1878,
+    "average_degree": 4.9007,
+    "average_in_degree": 2.4504,
+    "average_out_degree": 2.4504,
+    "min_degree": 1,
+    "max_degree": 10,
+    "density": 0.001764,
+    "weakly_connected_components_count": 1,
+    "strongly_connected_components_count": 7,
+    "largest_weakly_connected_component_nodes": 1390,
+    "largest_strongly_connected_component_nodes": 1382,
+    "articulation_points_count": 296,
+    "bridges_count": 325,
+    "is_eulerian_directed": false,
+    "is_semi_eulerian": false,
+    "is_planar_undirected": false,
+    "study_area": "Gandhipuram, Coimbatore, Tamil Nadu, India",
+    "description": "Rigorous graph-theoretic characterization of urban road network"
+}

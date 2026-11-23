@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Book a Parking Slot – SmartPark Gandhipuram{% endblock %}
+
+{% block content %}
+<div class="bg-primary-subtle py-4 border-bottom">
+    <div class="container">
+        <h1 class="fw-bold text-slate mb-1">Reserve Your Parking Slot</h1>
+        <p class="text-muted mb-0">Complete the reservation form below. All bookings are guaranteed and backed by SQLite database transactions.</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-pencil-square me-2 text-primary"></i>Online Slot Booking Form</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('booking.new_booking') }}" id="bookingForm">
+                        <!-- Customer Details Section -->
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 small tracking-wider">1. Driver & Contact Information</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Customer Full Name <span class="text-danger">*</span></label>
+                                <input type="text" name="customer_name" class="form-control" required
+                                       placeholder="e.g. Praisy Devamahimai"
+                                       value="{{ session.get('user_name', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" name="customer_email" class="form-control" required
+                                       placeholder="e.g. driver@example.com"
+                                       value="{{ session.get('user_email', '') }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" name="customer_phone" class="form-control"
+                                       placeholder="+91 98765 43210" value="+91 98421 55678">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Starting Location in Gandhipuram <span class="text-danger">*</span></label>
+                                <input type="text" name="start_location" class="form-control" required
+                                       placeholder="e.g. Cross Cut Road North Junction" value="Cross Cut Road North Junction">
+                            </div>
+                        </div>
+
+                        <!-- Vehicle Details Section -->
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 small tracking-wider">2. Vehicle Information</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Vehicle Registration Number <span class="text-danger">*</span></label>
+                                <input type="text" name="vehicle_number" class="form-control text-uppercase" required
+                                       placeholder="e.g. TN 38 AB 1234" value="TN 38 CB 7890">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Vehicle Type <span class="text-danger">*</span></label>
+                                <select name="vehicle_type" class="form-select" required>
+                                    <option value="Sedan" selected>Sedan</option>
+                                    <option value="SUV">SUV</option>
+                                    <option value="Hatchback">Hatchback</option>
+                                    <option value="Compact">Compact / Electric</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Facility & Slot Details Section -->
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 small tracking-wider">3. Reservation Schedule & Slot Allocation</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Arrival Date & Time <span class="text-danger">*</span></label>
+                                <input type="datetime-local" id="arrival_datetime" name="arrival_datetime" class="form-control" required
+                                       value="{{ default_arrival }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Departure Date & Time <span class="text-danger">*</span></label>
+                                <input type="datetime-local" id="departure_datetime" name="departure_datetime" class="form-control" required
+                                       value="{{ default_departure }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Parking Facility <span class="text-danger">*</span></label>
+                                <select name="facility_id" id="facility_select" class="form-select" required>
+                                    {% for fac in facilities %}
+                                        <option value="{{ fac.facility_id }}" {% if fac.facility_id == selected_facility_id %}selected{% endif %}>
+                                            {{ fac.facility_name }} (Cap: {{ fac.capacity }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Available Slot Number <span class="text-danger">*</span></label>
+                                <select name="slot_id" id="slot_select" class="form-select" required>
+                                    <option value="">Loading available slots...</option>
+                                </select>
+                                <div class="form-text small" id="slot_feedback">Checking real-time slot availability...</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Route Optimization Algorithm</label>
+                                <select name="routing_algorithm" class="form-select">
+                                    <option value="A*" selected>A* Search (Haversine Heuristic)</option>
+                                    <option value="Dijkstra">Dijkstra's Shortest Path</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" id="submitBtn" class="btn btn-primary-custom btn-lg">
+                                <i class="bi bi-check2-circle me-2"></i> Confirm & Book Parking Slot
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const facilitySelect = document.getElementById('facility_select');
+    const slotSelect = document.getElementById('slot_select');
+    const slotFeedback = document.getElementById('slot_feedback');
+    const arrivalInput = document.getElementById('arrival_datetime');
+    const departureInput = document.getElementById('departure_datetime');
+    const preselectedSlotId = "{{ selected_slot_id }}";
+
+    function updateSlots() {
+        const facilityId = facilitySelect.value;
+        const arrival = arrivalInput.value;
+        const departure = departureInput.value;
+
+        if (!facilityId) return;
+
+        slotSelect.innerHTML = '<option value="">Loading slots...</option>';
+        slotFeedback.textContent = 'Querying database for available slots...';
+
+        fetch(`/api/facility/${facilityId}/slots?arrival=${encodeURIComponent(arrival)}&departure=${encodeURIComponent(departure)}`)
+            .then(res => res.json())
+            .then(data => {
+                slotSelect.innerHTML = '';
+                const availableSlots = data.slots.filter(s => s.status === 'available');
+
+                if (availableSlots.length === 0) {
+                    slotSelect.innerHTML = '<option value="">No available slots for this time window</option>';
+                    slotFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-exclamation-triangle-fill me-1"></i>All 30 slots are occupied or booked.</span>';
+                } else {
+                    availableSlots.forEach(slot => {
+                        const opt = document.createElement('option');
+                        opt.value = slot.slot_id;
+                        opt.textContent = `${slot.slot_number} (Free)`;
+                        if (slot.slot_id === preselectedSlotId) {
+                            opt.selected = true;
+                        }
+                        slotSelect.appendChild(opt);
+                    });
+                    slotFeedback.innerHTML = `<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>${availableSlots.length} slots available for requested duration.</span>`;
+                }
+            })
+            .catch(err => {
+                slotFeedback.textContent = 'Error loading slots.';
+            });
+    }
+
+    facilitySelect.addEventListener('change', updateSlots);
+    arrivalInput.addEventListener('change', updateSlots);
+    departureInput.addEventListener('change', updateSlots);
+
+    // Initial load
+    updateSlots();
+});
+</script>
+{% endblock %}

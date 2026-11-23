@@ -1,0 +1,297 @@
+{% extends "super_admin/layout.html" %}
+
+{% block extra_head %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block super_content %}
+<!-- Welcome & Quick Stats -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-speedometer2 text-danger me-2"></i>Gandhipuram SmartPark Central Command</h4>
+                <p class="text-muted mb-0">System-wide monitoring across 5 parking hubs, 150 slot bays, gate movements, and algorithmic routing.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('super_admin.facilities_list') }}" class="btn btn-outline-primary btn-sm fw-semibold">
+                    <i class="bi bi-building me-1"></i> Facilities ({{ total_facilities }})
+                </a>
+                <a href="{{ url_for('super_admin.staff_management') }}" class="btn btn-outline-secondary btn-sm fw-semibold">
+                    <i class="bi bi-people me-1"></i> Staff ({{ total_staff }})
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Primary System KPIs -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 border-start border-primary border-4">
+            <span class="text-muted small text-uppercase fw-semibold">Total Capacity</span>
+            <div class="d-flex justify-content-between align-items-end mt-2">
+                <h2 class="fw-bold text-dark mb-0">{{ total_capacity }}</h2>
+                <span class="badge bg-primary-subtle text-primary">{{ total_facilities }} Facilities</span>
+            </div>
+            <small class="text-muted">Total marked parking bays</small>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 border-start border-danger border-4">
+            <span class="text-muted small text-uppercase fw-semibold">Parked / Occupied</span>
+            <div class="d-flex justify-content-between align-items-end mt-2">
+                <h2 class="fw-bold text-danger mb-0">{{ total_occupied }}</h2>
+                <span class="badge bg-danger-subtle text-danger">{{ (total_occupied / total_capacity * 100)|round(1) }}% full</span>
+            </div>
+            <small class="text-muted">Vehicles on bays right now</small>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 border-start border-info border-4">
+            <span class="text-muted small text-uppercase fw-semibold">Reserved Bays</span>
+            <div class="d-flex justify-content-between align-items-end mt-2">
+                <h2 class="fw-bold text-info mb-0">{{ total_reserved }}</h2>
+                <span class="badge bg-info-subtle text-info">{{ active_bookings }} Active</span>
+            </div>
+            <small class="text-muted">Confirmed future bookings</small>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm p-3 border-start border-success border-4">
+            <span class="text-muted small text-uppercase fw-semibold">Available Bays</span>
+            <div class="d-flex justify-content-between align-items-end mt-2">
+                <h2 class="fw-bold text-success mb-0">{{ total_available }}</h2>
+                <span class="badge bg-success-subtle text-success">{{ (total_available / total_capacity * 100)|round(1) }}% free</span>
+            </div>
+            <small class="text-muted">Ready for allocation</small>
+        </div>
+    </div>
+</div>
+
+<!-- Secondary Operational Metrics -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-3 bg-primary-subtle text-primary rounded-3"><i class="bi bi-graph-up fs-4"></i></div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Network Utilization</span>
+                    <h4 class="fw-bold text-dark mb-0">{{ system_utilization }}%</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-3 bg-warning-subtle text-warning-emphasis rounded-3"><i class="bi bi-journal-plus fs-4"></i></div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Today's Bookings</span>
+                    <h4 class="fw-bold text-dark mb-0">{{ today_bookings }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-3 bg-success-subtle text-success rounded-3"><i class="bi bi-box-arrow-in-right fs-4"></i></div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Today's Entries</span>
+                    <h4 class="fw-bold text-dark mb-0">{{ today_entries }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="p-3 bg-danger-subtle text-danger rounded-3"><i class="bi bi-box-arrow-right fs-4"></i></div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold">Today's Exits</span>
+                    <h4 class="fw-bold text-dark mb-0">{{ today_exits }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Facility Utilization Rates (%)</h6>
+                <span class="badge bg-light text-muted border">Per-Facility Demand</span>
+            </div>
+            <div class="card-body p-4">
+                <canvas id="facilityBarChart" style="height: 260px;"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-pie-chart-fill text-danger me-2"></i>Network Slot Distribution</h6>
+                <span class="badge bg-light text-muted border">Total: {{ total_capacity }}</span>
+            </div>
+            <div class="card-body p-4 d-flex flex-column align-items-center justify-content-center">
+                <div style="max-width: 270px; width: 100%;">
+                    <canvas id="networkDoughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Facilities Summary Table & Recent Audits -->
+<div class="row g-4">
+    <!-- Facilities Status Table -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-building text-primary me-2"></i>Live Facility Status Matrix</h6>
+                <a href="{{ url_for('super_admin.facilities_list') }}" class="btn btn-sm btn-outline-primary">Manage All</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light text-muted small text-uppercase">
+                            <tr>
+                                <th>Facility</th>
+                                <th>Node</th>
+                                <th>Capacity</th>
+                                <th>Occupied</th>
+                                <th>Reserved</th>
+                                <th>Available</th>
+                                <th>Utilization</th>
+                                <th>State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in facilities %}
+                            {% set fstat = facility_stats[loop.index0] %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ f.facility_name.split(' - ')[0] }}</div>
+                                    <small class="text-muted">{{ f.facility_id }}</small>
+                                </td>
+                                <td><code class="small">{{ f.node_id }}</code></td>
+                                <td class="fw-semibold">{{ fstat.capacity }}</td>
+                                <td class="text-danger fw-bold">{{ fstat.occupied }}</td>
+                                <td class="text-info fw-bold">{{ fstat.reserved }}</td>
+                                <td class="text-success fw-bold">{{ fstat.available }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height: 6px;">
+                                            <div class="progress-bar bg-primary" style="width: {{ fstat.utilization_pct }}%;"></div>
+                                        </div>
+                                        <span class="small fw-semibold">{{ fstat.utilization_pct }}%</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if f.is_active %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Inactive</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent System Audits -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-shield-check text-success me-2"></i>Recent System Audit Trail</h6>
+                <a href="{{ url_for('super_admin.activity_logs') }}" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for act in recent_activities %}
+                    <li class="list-group-item py-3 px-3">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <span class="badge bg-light text-dark font-monospace border">{{ act.action_type }}</span>
+                            <small class="text-muted">{{ act.timestamp.strftime('%H:%M:%S') }}</small>
+                        </div>
+                        <div class="small text-dark fw-semibold">{{ act.description }}</div>
+                        <div class="small text-muted" style="font-size:0.75rem;">By: {{ act.user.name if act.user else 'System' }} {% if act.facility_id %}| Hub: {{ act.facility_id }}{% endif %}</div>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item py-4 text-center text-muted">
+                        No activity records found.
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Facility Utilization Bar Chart
+    const ctxBar = document.getElementById('facilityBarChart').getContext('2d');
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: {{ chart_data.labels|tojson }},
+            datasets: [{
+                label: 'Utilization %',
+                data: {{ chart_data.utilizations|tojson }},
+                backgroundColor: '#2563EB',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { callback: v => v + '%' }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    // Network Doughnut Chart
+    const ctxPie = document.getElementById('networkDoughnutChart').getContext('2d');
+    new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+            labels: ['Occupied', 'Reserved', 'Maintenance', 'Available'],
+            datasets: [{
+                data: [
+                    {{ chart_data.occupied_total }},
+                    {{ chart_data.reserved_total }},
+                    {{ chart_data.maintenance_total }},
+                    {{ chart_data.available_total }}
+                ],
+                backgroundColor: ['#EF4444', '#3B82F6', '#F59E0B', '#10B981'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            },
+            cutout: '65%'
+        }
+    });
+});
+</script>
+{% endblock %}

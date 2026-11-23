@@ -1,0 +1,6 @@
+facility_id,facility_name,node_id,latitude,longitude,total_capacity,initial_occupied,available_spaces,description
+P1,P1 - Cross Cut Road Commercial Parking,1482456195,11.0171284,76.9648307,30,10,20,Multi-tier commercial parking hub serving Cross Cut Road retail district.
+P2,P2 - 100 Feet Road Multi-Level Parking,1473774412,11.0225636,76.9688257,30,10,20,Modern automated facility on 100 Feet Road commercial corridor.
+P3,P3 - Bharathiar Road Express Parking,12375018437,11.0136264,76.9683017,30,10,20,Transit parking adjacent to Bharathiar Road and central junction.
+P4,P4 - Dr. Nanjappa Road Central Parking,9179381858,11.0182996,76.9722689,30,10,20,High-volume parking complex serving Gandhipuram Central Bus Stand zone.
+P5,P5 - Sathy Road Highway Transit Parking,12374998234,11.0249518,76.9627064,30,10,20,Northbound peripheral transit parking off Sathyamangalam National Highway.

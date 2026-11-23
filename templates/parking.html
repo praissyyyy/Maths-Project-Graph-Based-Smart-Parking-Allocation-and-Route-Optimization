@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Find Parking – SmartPark Gandhipuram{% endblock %}
+
+{% block content %}
+<div class="bg-primary-subtle py-4 border-bottom">
+    <div class="container">
+        <h1 class="fw-bold text-slate mb-1">Find Parking Facilities</h1>
+        <p class="text-muted mb-0">Browse simulated parking hubs in Gandhipuram, check real-time availability, and reserve your slot.</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <!-- Search and Filter Bar -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-3">
+            <form method="GET" action="{{ url_for('parking.list_facilities') }}" class="row g-2 align-items-center">
+                <div class="col-md-6 col-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="q" class="form-control border-start-0" placeholder="Search by road or facility name..." value="{{ search_query }}">
+                    </div>
+                </div>
+                <div class="col-md-4 col-8">
+                    <select name="status" class="form-select">
+                        <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Facilities</option>
+                        <option value="available" {% if status_filter == 'available' %}selected{% endif %}>Has Available Slots</option>
+                        <option value="full" {% if status_filter == 'full' %}selected{% endif %}>Fully Occupied</option>
+                    </select>
+                </div>
+                <div class="col-md-2 col-4">
+                    <button type="submit" class="btn btn-primary-custom w-100">Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Facility Cards Grid -->
+    <div class="row g-4">
+        {% if facilities %}
+            {% for fac in facilities %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="facility-card h-100 p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="facility-badge">{{ fac.facility_id }}</span>
+                            <span class="badge {% if fac.available > 10 %}bg-success-subtle text-success border border-success-subtle{% elif fac.available > 0 %}bg-warning-subtle text-warning border border-warning-subtle{% else %}bg-danger-subtle text-danger border border-danger-subtle{% endif %}">
+                                {{ fac.available }} of {{ fac.capacity }} Free
+                            </span>
+                        </div>
+
+                        <h5 class="fw-bold text-dark mb-2">{{ fac.facility_name }}</h5>
+                        <p class="small text-muted mb-3 flex-grow-1">{{ fac.description }}</p>
+
+                        <div class="bg-light p-3 rounded-3 mb-3 border">
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Occupied Bays:</span>
+                                <strong class="text-danger">{{ fac.occupied }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Reserved Slots:</span>
+                                <strong class="text-warning-emphasis">{{ fac.reserved }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-1">
+                                <span>Available Slots:</span>
+                                <strong class="text-success">{{ fac.available }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-2">
+                                <span>Current Utilisation:</span>
+                                <strong class="text-primary">{{ fac.utilization_pct }}%</strong>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar {% if fac.utilization_pct > 80 %}bg-danger{% elif fac.utilization_pct > 50 %}bg-warning{% else %}bg-success{% endif %}"
+                                     role="progressbar" style="width: {{ fac.utilization_pct }}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-auto">
+                            <a href="{{ url_for('parking.facility_details', facility_id=fac.facility_id) }}" class="btn btn-outline-secondary btn-sm flex-fill">
+                                <i class="bi bi-info-circle me-1"></i> View Details
+                            </a>
+                            <a href="{{ url_for('booking.new_booking', facility_id=fac.facility_id) }}" class="btn btn-primary-custom btn-sm flex-fill text-center">
+                                <i class="bi bi-bookmark-plus me-1"></i> Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-search fs-1 text-muted"></i>
+                <h5 class="mt-3 text-muted">No parking facilities match your search query.</h5>
+                <a href="{{ url_for('parking.list_facilities') }}" class="btn btn-outline-primary btn-sm mt-2">Clear Filters</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

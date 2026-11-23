@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Route Optimization Map – SmartPark Gandhipuram{% endblock %}
+
+{% block extra_head %}
+<style>
+    .facility-marker-icon {
+        background-color: #1E3A8A;
+        color: white;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    .facility-marker-icon.active {
+        background-color: #2563EB;
+        transform: scale(1.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-primary-subtle py-4 border-bottom">
+    <div class="container">
+        <h1 class="fw-bold text-slate mb-1">Interactive Route Optimization Map</h1>
+        <p class="text-muted mb-0">Visualize the Gandhipuram road network, simulated parking facilities, and compute shortest routes using Dijkstra and A* search.</p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Control Panel Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-sliders me-2 text-primary"></i>Route Navigation Controls</h5>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Starting Point Selection -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">1. Vehicle Starting Point</label>
+                        <select id="startPointSelect" class="form-select mb-2">
+                            {% for pt in starting_points %}
+                                <option value="{{ pt.lat }},{{ pt.lon }}">{{ pt.name }}</option>
+                            {% endfor %}
+                            <option value="custom">Click anywhere on map to set custom pin</option>
+                        </select>
+                        <small class="text-muted d-block">Coordinates: <span id="startCoordsDisplay" class="font-monospace text-primary">11.0210, 76.9645</span></small>
+                    </div>
+
+                    <!-- Destination Facility Selection -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">2. Destination Facility</label>
+                        <select id="facilitySelect" class="form-select">
+                            {% for f in facilities %}
+                                <option value="{{ f.facility_id }}" data-lat="{{ f.latitude }}" data-lon="{{ f.longitude }}" data-node="{{ f.node_id }}">
+                                    {{ f.facility_name }} ({{ f.available_spaces }} free)
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Shortest Path Algorithm Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">3. Routing Algorithm</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="algoRadio" id="algoAstar" value="A*" checked>
+                            <label class="btn btn-outline-primary" for="algoAstar"><i class="bi bi-compass me-1"></i> A* Search</label>
+
+                            <input type="radio" class="btn-check" name="algoRadio" id="algoDijkstra" value="Dijkstra">
+                            <label class="btn btn-outline-primary" for="algoDijkstra"><i class="bi bi-diagram-3 me-1"></i> Dijkstra</label>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button id="calculateRouteBtn" class="btn btn-primary-custom w-100 py-2 mb-3">
+                        <i class="bi bi-play-circle-fill me-2"></i> Compute Shortest Path
+                    </button>
+
+                    <!-- Telemetry Output Card -->
+                    <div id="telemetryCard" class="p-3 bg-light rounded-3 border d-none">
+                        <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-activity text-success me-1"></i> Backend Execution Telemetry</h6>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Algorithm Applied:</span>
+                            <strong id="resAlgorithm" class="text-primary">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Shortest Path Distance:</span>
+                            <strong id="resDistance" class="text-dark">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Algorithm Latency:</span>
+                            <strong id="resLatency" class="text-success">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">Search Nodes Settled:</span>
+                            <strong id="resExplored" class="text-info">-</strong>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-muted">Route Path Length:</span>
+                            <strong id="resPathLength" class="text-dark">-</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Facilities Quick Availability Card -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-p-square me-2 text-primary"></i>Gandhipuram Parking Hubs</h6>
+                </div>
+                <div class="list-group list-group-flush small">
+                    {% for f in facilities %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold">{{ f.facility_id }}:</span> {{ f.facility_name.split(' - ')[1] }}
+                            </div>
+                            <span class="badge {% if f.available_spaces > 10 %}bg-success{% elif f.available_spaces > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                {{ f.available_spaces }} free
+                            </span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Display Container -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-bold text-dark"><i class="bi bi-geo-alt text-danger me-1"></i> OpenStreetMap Live GIS View</span>
+                        <small class="text-muted ms-2">(Gandhipuram, Coimbatore Study Radius: 1,400m)</small>
+                    </div>
+                    <span class="badge bg-light text-secondary border">Click map to move vehicle pin</span>
+                </div>
+                <div class="card-body p-0">
+                    <div id="leaflet-map" style="height: 620px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const studyCenter = [{{ study_center.lat }}, {{ study_center.lon }}];
+    const map = L.map('leaflet-map').setView(studyCenter, 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Parking facilities data from backend
+    const facilities = {{ facilities|tojson }};
+    const markers = {};
+
+    facilities.forEach(f => {
+        const marker = L.circleMarker([f.latitude, f.longitude], {
+            radius: 10,
+            fillColor: "#1E3A8A",
+            color: "#FFFFFF",
+            weight: 2,
+            opacity: 1,
+            fillOpacity: 0.9
+        }).addTo(map);
+
+        marker.bindPopup(`
+            <div style="min-width: 180px;">
+                <h6 class="fw-bold mb-1">${f.facility_name}</h6>
+                <div class="small text-muted mb-2">${f.description}</div>
+                <div class="d-flex justify-content-between small mb-1">
+                    <span>Capacity:</span> <strong>${f.capacity}</strong>
+                </div>
+                <div class="d-flex justify-content-between small mb-2">
+                    <span>Available:</span> <strong class="text-success">${f.available_spaces}</strong>
+                </div>
+                <a href="/booking/new?facility_id=${f.facility_id}" class="btn btn-primary btn-sm w-100 text-white" style="font-size: 0.75rem;">
+                    Book Slot Now
+                </a>
+            </div>
+        `);
+
+        markers[f.facility_id] = marker;
+    });
+
+    // Start point marker
+    let startLat = 11.0210;
+    let startLon = 76.9645;
+    let startMarker = L.marker([startLat, startLon], {
+        draggable: true
+    }).addTo(map);
+
+    startMarker.bindPopup("<strong>Vehicle Starting Position</strong><br>Drag to reposition.").openPopup();
+
+    function updateStartCoords(lat, lon) {
+        startLat = lat;
+        startLon = lon;
+        document.getElementById('startCoordsDisplay').textContent = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+        startMarker.setLatLng([lat, lon]);
+    }
+
+    startMarker.on('dragend', function(e) {
+        const pos = e.target.getLatLng();
+        updateStartCoords(pos.lat, pos.lng);
+        document.getElementById('startPointSelect').value = 'custom';
+    });
+
+    map.on('click', function(e) {
+        updateStartCoords(e.latlng.lat, e.latlng.lng);
+        document.getElementById('startPointSelect').value = 'custom';
+    });
+
+    document.getElementById('startPointSelect').addEventListener('change', function() {
+        if (this.value !== 'custom') {
+            const parts = this.value.split(',');
+            updateStartCoords(parseFloat(parts[0]), parseFloat(parts[1]));
+            map.panTo([startLat, startLon]);
+        }
+    });
+
+    let currentRouteLine = null;
+
+    document.getElementById('calculateRouteBtn').addEventListener('click', function() {
+        const btn = this;
+        const facId = document.getElementById('facilitySelect').value;
+        const algo = document.querySelector('input[name="algoRadio"]:checked').value;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Solving on Graph...';
+
+        fetch('/api/route', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                start_lat: startLat,
+                start_lon: startLon,
+                facility_id: facId,
+                algorithm: algo
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-play-circle-fill me-2"></i> Compute Shortest Path';
+
+            if (data.status === 'success') {
+                if (currentRouteLine) {
+                    map.removeLayer(currentRouteLine);
+                }
+
+                currentRouteLine = L.polyline(data.coordinates, {
+                    color: '#2563EB',
+                    weight: 5,
+                    opacity: 0.85,
+                    dashArray: algo === 'A*' ? null : '6, 6'
+                }).addTo(map);
+
+                map.fitBounds(currentRouteLine.getBounds(), {padding: [50, 50]});
+
+                // Update Telemetry display
+                document.getElementById('resAlgorithm').textContent = data.algorithm;
+                document.getElementById('resDistance').textContent = `${data.distance_meters} m (${data.distance_km} km)`;
+                document.getElementById('resLatency').textContent = `${data.execution_time_ms} ms`;
+                document.getElementById('resExplored').textContent = `${data.nodes_explored} nodes`;
+                document.getElementById('resPathLength').textContent = `${data.path_node_count} intersections`;
+                document.getElementById('telemetryCard').classList.remove('d-none');
+            } else {
+                alert(data.message || 'Error finding route.');
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-play-circle-fill me-2"></i> Compute Shortest Path';
+            alert('Failed to contact routing server.');
+        });
+    });
+});
+</script>
+{% endblock %}

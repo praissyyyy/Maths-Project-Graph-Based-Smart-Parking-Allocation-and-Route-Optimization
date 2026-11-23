@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}SmartPark – Gandhipuram | Smart Parking & Route Optimization{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-banner">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-3 text-uppercase fw-semibold tracking-wider">
+                    <i class="bi bi-shield-check me-1"></i> Graph-Theoretic Optimization
+                </span>
+                <h1 class="hero-title mb-3">Find Your Parking Space in Gandhipuram</h1>
+                <p class="hero-subtitle mb-4">
+                    Discover available parking spaces, reserve your slot, and reach your destination using intelligent route optimization.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{{ url_for('parking.list_facilities') }}" class="btn btn-primary-custom btn-lg shadow">
+                        <i class="bi bi-search me-2"></i> Find Parking
+                    </a>
+                    <a href="{{ url_for('map.interactive_map') }}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-map me-2"></i> Route Map
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center">
+                <div class="p-4 bg-white bg-opacity-10 backdrop-blur rounded-4 border border-white border-opacity-20 shadow-lg text-start">
+                    <div class="d-flex align-items-center justify-content-between mb-3 border-bottom border-white border-opacity-25 pb-2">
+                        <span class="fw-bold text-white"><i class="bi bi-broadcast me-2 text-warning"></i>Live Parking Status</span>
+                        <span class="badge bg-success">Active Network</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-white mb-2">
+                        <span>Study Location:</span>
+                        <span class="fw-semibold text-info">Gandhipuram, Coimbatore</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-white mb-2">
+                        <span>Road Network Graph:</span>
+                        <span class="fw-semibold">1,390 Nodes | 3,406 Edges</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-white mb-2">
+                        <span>Routing Engine:</span>
+                        <span class="badge bg-info text-dark">Dijkstra & A* (Haversine)</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-white mb-3">
+                        <span>Flow Optimization:</span>
+                        <span class="badge bg-light text-dark">MCMF (Min-Cost Max-Flow)</span>
+                    </div>
+                    <div class="progress mb-2" style="height: 10px;">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ system_utilization }}%;"></div>
+                    </div>
+                    <small class="text-white-50">System Occupancy: {{ system_utilization }}% across 5 simulated facilities</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dashboard Statistics Row -->
+<section class="container my-n4" style="margin-top: -2rem;">
+    <div class="row g-3">
+        <div class="col-md-3 col-6">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 text-dark">{{ total_facilities }}</h3>
+                    <small class="text-muted fw-semibold">Total Facilities</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-info-subtle text-info">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 text-dark">{{ total_capacity }}</h3>
+                    <small class="text-muted fw-semibold">Total Capacity</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-danger-subtle text-danger">
+                    <i class="bi bi-car-front-fill"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 text-dark">{{ total_occupied }}</h3>
+                    <small class="text-muted fw-semibold">Occupied Slots</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0 text-dark">{{ total_available }}</h3>
+                    <small class="text-muted fw-semibold">Available Slots</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Facilities Section -->
+<section class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1 text-slate">Simulated Parking Facilities</h2>
+            <p class="text-muted mb-0">Select a facility to inspect 30 individual slots, real-time availability, and route distances.</p>
+        </div>
+        <a href="{{ url_for('parking.list_facilities') }}" class="btn btn-outline-primary">
+            View All Facilities <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {% for fac in facilities %}
+            {% set stats = fac.get_dynamic_occupancy() %}
+            <div class="col-lg-4 col-md-6">
+                <div class="facility-card h-100 p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="facility-badge">{{ fac.facility_id }}</span>
+                        <span class="badge {% if stats.available > 10 %}bg-success-subtle text-success border border-success-subtle{% elif stats.available > 0 %}bg-warning-subtle text-warning border border-warning-subtle{% else %}bg-danger-subtle text-danger border border-danger-subtle{% endif %}">
+                            {{ stats.available }} slots free
+                        </span>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">{{ fac.facility_name }}</h5>
+                    <p class="small text-muted mb-3 flex-grow-1">{{ fac.description }}</p>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small text-muted mb-1">
+                            <span>Capacity: {{ fac.capacity }}</span>
+                            <span>Occupied: {{ stats.occupied }} ({{ stats.utilization_pct }}%)</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar {% if stats.utilization_pct > 80 %}bg-danger{% elif stats.utilization_pct > 50 %}bg-warning{% else %}bg-primary{% endif %}"
+                                 role="progressbar" style="width: {{ stats.utilization_pct }}%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-auto">
+                        <a href="{{ url_for('parking.facility_details', facility_id=fac.facility_id) }}" class="btn btn-outline-secondary btn-sm flex-fill">
+                            <i class="bi bi-grid me-1"></i> View Slots
+                        </a>
+                        <a href="{{ url_for('booking.new_booking', facility_id=fac.facility_id) }}" class="btn btn-primary-custom btn-sm flex-fill text-center">
+                            <i class="bi bi-calendar-check me-1"></i> Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Mathematical Framework Highlights -->
+<section class="bg-white py-5 border-top border-bottom">
+    <div class="container">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <span class="badge bg-primary-subtle text-primary mb-2">Algorithm Integration</span>
+            <h2 class="fw-bold">Mathematical Optimization & Cyber-Physical Design</h2>
+            <p class="text-muted">SmartPark integrates rigorous graph theory, capacity-constrained network flows, and heuristic path planning into a production reservation backend.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="p-4 rounded-3 border h-100 bg-light">
+                    <div class="stat-icon bg-primary text-white mb-3">
+                        <i class="bi bi-diagram-3-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Directed Road Network $G=(V, E)$</h5>
+                    <p class="small text-muted mb-0">
+                        Extracted directly from OpenStreetMap covering a 1,400m radius in Gandhipuram, Coimbatore. Directed edges preserve one-way traffic restrictions and exact metric arc lengths.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-3 border h-100 bg-light">
+                    <div class="stat-icon bg-success text-white mb-3">
+                        <i class="bi bi-shuffle"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Minimum-Cost Maximum-Flow (MCMF)</h5>
+                    <p class="small text-muted mb-0">
+                        Formulated as a bipartite min-cost flow problem $\min \sum c_{ij} x_{ij}$ subject to capacity constraints $A_j$. Optimizes multi-vehicle assignments while guaranteeing non-overlapping slot allocation.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-3 border h-100 bg-light">
+                    <div class="stat-icon bg-info text-white mb-3">
+                        <i class="bi bi-compass-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">A* Search with Haversine Heuristic</h5>
+                    <p class="small text-muted mb-0">
+                        Combines path cost $g(n)$ with an admissible and consistent spherical great-circle heuristic $h(n)$, reducing search space exploration by over 40% compared to standard Dijkstra search.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

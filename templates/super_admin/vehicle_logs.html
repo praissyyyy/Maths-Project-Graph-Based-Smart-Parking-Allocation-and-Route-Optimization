@@ -1,0 +1,131 @@
+{% extends "super_admin/layout.html" %}
+
+{% block super_content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-arrow-left-right text-primary me-2"></i>System-Wide Vehicle Movement Logs</h4>
+                <p class="text-muted mb-0">Live audit of gate arrivals, departures, check-in attendants, and active parked vehicles across all facilities.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ url_for('super_admin.vehicle_logs', facility=facility_filter, status=status_filter, q=search_query, export='true') }}" class="btn btn-success fw-semibold">
+                    <i class="bi bi-file-earmark-excel me-1"></i> Export Movement CSV
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="GET" action="{{ url_for('super_admin.vehicle_logs') }}" class="row g-2 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                    <input type="text" name="q" class="form-control" placeholder="Search Vehicle Plate (e.g. TN38...)" value="{{ search_query }}">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="facility" class="form-select font-monospace" onchange="this.form.submit()">
+                    <option value="ALL" {% if facility_filter == 'ALL' %}selected{% endif %}>All Facilities (P1-P5)</option>
+                    {% for f in facilities %}
+                    <option value="{{ f.facility_id }}" {% if facility_filter == f.facility_id %}selected{% endif %}>{{ f.facility_id }} – {{ f.facility_name.split(' - ')[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-select" onchange="this.form.submit()">
+                    <option value="ALL" {% if status_filter == 'ALL' %}selected{% endif %}>All Movement Statuses</option>
+                    <option value="IN_PARKING" {% if status_filter == 'IN_PARKING' %}selected{% endif %}>Currently Parked</option>
+                    <option value="COMPLETED" {% if status_filter == 'COMPLETED' %}selected{% endif %}>Completed Exits</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-primary w-100 fw-semibold">Filter</button>
+                <a href="{{ url_for('super_admin.vehicle_logs') }}" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Vehicle Logs Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="fw-bold mb-0 text-dark">Movement Records: <span class="badge bg-primary fs-6">{{ logs|length }}</span></h6>
+        <span class="small text-muted">Showing latest 200 gate events</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Facility Hub</th>
+                        <th>Vehicle Reg &amp; Type</th>
+                        <th>Bay Slot</th>
+                        <th>Gate Entry Time</th>
+                        <th>Gate Exit Time</th>
+                        <th>Status</th>
+                        <th>Walk-In</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in logs %}
+                    <tr>
+                        <td class="small font-monospace text-muted">#{{ l.log_id }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark font-monospace border">{{ l.facility_id }}</span>
+                            <div class="text-muted small" style="font-size:0.75rem;">BK: {{ l.booking_id }}</div>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark font-monospace">{{ l.vehicle_number }}</div>
+                            <small class="text-muted">{{ l.vehicle_type }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace">{{ l.slot.slot_number if l.slot else 'N/A' }}</span>
+                        </td>
+                        <td class="small">
+                            {% if l.entry_time %}
+                            <i class="bi bi-box-arrow-in-right text-success me-1"></i>{{ l.entry_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                            {% else %}-{% endif %}
+                        </td>
+                        <td class="small">
+                            {% if l.exit_time %}
+                            <i class="bi bi-box-arrow-right text-danger me-1"></i>{{ l.exit_time.strftime('%Y-%m-%d %H:%M:%S') }}
+                            {% else %}
+                            <span class="text-muted italic">Still parked inside</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if l.status == 'IN_PARKING' %}
+                            <span class="badge bg-warning text-dark"><i class="bi bi-car-front me-1"></i>IN LOT</span>
+                            {% elif l.status == 'COMPLETED' %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>EXITED</span>
+                            {% else %}
+                            <span class="badge bg-light text-dark">{{ l.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if l.is_walkin %}
+                            <span class="badge bg-info-subtle text-info border border-info-subtle">Walk-in</span>
+                            {% else %}
+                            <span class="text-muted small">Online</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-shield-x fs-2 d-block mb-2"></i>
+                            No vehicle movement logs matching the search filters.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

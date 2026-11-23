@@ -1,0 +1,13 @@
+scenario,algorithm,total_vehicles,assigned_vehicles,unassigned_vehicles,allocation_success_rate_pct,avg_travel_distance_m,total_travel_distance_m,execution_time_s
+low,FCFS,10,10,0,100.0,1733.9,17338.99,0.005813
+low,Nearest Available,10,10,0,100.0,1118.72,11187.18,0.026498
+low,MCMF,10,10,0,100.0,1118.72,11187.18,0.026626
+medium,FCFS,25,25,0,100.0,1802.44,45061.05,0.012425
+medium,Nearest Available,25,25,0,100.0,1244.04,31101.11,0.070598
+medium,MCMF,25,25,0,100.0,1244.04,31101.11,0.071396
+high,FCFS,45,45,0,100.0,1641.41,73863.46,0.021044
+high,Nearest Available,45,45,0,100.0,1129.14,50811.17,0.112599
+high,MCMF,45,45,0,100.0,1129.14,50811.17,0.114486
+oversubscribed,FCFS,110,100,10,90.91,1693.7,169370.21,0.050617
+oversubscribed,Nearest Available,110,100,10,90.91,1099.11,109911.07,0.224389
+oversubscribed,MCMF,110,100,10,90.91,960.19,96019.14,0.278408

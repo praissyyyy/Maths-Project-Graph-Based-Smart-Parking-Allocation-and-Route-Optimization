@@ -1,0 +1,152 @@
+{% extends "super_admin/layout.html" %}
+
+{% block super_content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <h4 class="fw-bold mb-1"><i class="bi bi-gear-fill text-primary me-2"></i>Infrastructure &amp; Algorithm Settings</h4>
+        <p class="text-muted mb-0">System parameters, road network specifications, graph theory algorithms, and security policies.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Road Network & Graph Config -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-diagram-3 text-primary me-2"></i>Road Network Topology (Gandhipuram)</h6>
+            </div>
+            <div class="card-body p-4">
+                <table class="table table-sm table-borderless align-middle mb-0">
+                    <tbody>
+                        <tr>
+                            <td class="text-muted fw-semibold">Study Region:</td>
+                            <td class="fw-bold text-dark">Gandhipuram, Coimbatore, Tamil Nadu, India</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Central Coordinates:</td>
+                            <td class="font-monospace">11.0182714° N, 76.9677744° E</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Coverage Radius:</td>
+                            <td>1,400 metres (~6.15 sq km)</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Graph Network File:</td>
+                            <td class="font-monospace small"><code>data/gandhipuram_road_network.graphml</code></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Graph Size:</td>
+                            <td><span class="badge bg-success">1,390 Nodes</span> &amp; <span class="badge bg-primary">3,406 Directed Edges</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Edge Weighting:</td>
+                            <td>Physical distance (metres) &amp; dynamic traffic congestion impedance</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-shield-lock text-danger me-2"></i>Role-Based Access Control (RBAC) Policies</h6>
+            </div>
+            <div class="card-body p-4">
+                <ul class="list-group list-group-flush small">
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-0">
+                        <div>
+                            <strong>Driver / Public User</strong>
+                            <div class="text-muted">Search slots, book parking, view navigation routes, cancel own bookings</div>
+                        </div>
+                        <span class="badge bg-secondary">Public / Authenticated</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-0">
+                        <div>
+                            <strong>Parking Facility Staff</strong>
+                            <div class="text-muted">Strictly scoped to assigned facility (P1-P5). Gate entry/exit, manual slot overrides, walk-ins</div>
+                        </div>
+                        <span class="badge bg-info text-dark">Staff Portal</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-2 px-0">
+                        <div>
+                            <strong>Central Super Administrator</strong>
+                            <div class="text-muted">System-wide visibility, facility CRUD, staff account management, global overrides, CSV exports</div>
+                        </div>
+                        <span class="badge bg-danger">Full Control</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optimization Algorithms & System Parameters -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-cpu text-primary me-2"></i>Active Mathematical &amp; Graph Algorithms</h6>
+            </div>
+            <div class="card-body p-4">
+                <div class="mb-3 p-3 bg-light rounded-3 border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-primary">1. Minimum-Cost Maximum-Flow (MCMF)</strong>
+                        <span class="badge bg-primary">Network Simplex</span>
+                    </div>
+                    <small class="text-muted">Optimizes system-wide parking allocation by modeling users as source flow, road impedances as edge costs, and facility slots as bounded sinks.</small>
+                </div>
+
+                <div class="mb-3 p-3 bg-light rounded-3 border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-dark">2. Dijkstra's Algorithm</strong>
+                        <span class="badge bg-secondary">Exact Shortest Path</span>
+                    </div>
+                    <small class="text-muted">Computes guaranteed shortest road distance path from driver origin to assigned facility entry node.</small>
+                </div>
+
+                <div class="mb-3 p-3 bg-light rounded-3 border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-dark">3. A* Search Algorithm</strong>
+                        <span class="badge bg-secondary">Haversine Heuristic</span>
+                    </div>
+                    <small class="text-muted">Accelerates shortest-path computation with admissible straight-line distance heuristic for rapid in-vehicle navigation.</small>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-muted">4. First-Come-First-Served (FCFS)</strong>
+                        <span class="badge bg-light text-muted border">Baseline Benchmark</span>
+                    </div>
+                    <small class="text-muted">Traditional uncoordinated parking baseline for mathematical benchmarking against MCMF optimization.</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-database text-primary me-2"></i>Database &amp; Environment</h6>
+            </div>
+            <div class="card-body p-4">
+                <table class="table table-sm table-borderless align-middle mb-0 small">
+                    <tbody>
+                        <tr>
+                            <td class="text-muted fw-semibold">Database Engine:</td>
+                            <td>SQLite 3 with SQLAlchemy 2.0 ORM</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Database Location:</td>
+                            <td class="font-monospace"><code>instance/smartpark.db</code></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Active Server Port:</td>
+                            <td><code>5001</code> (avoiding macOS AirPlay port 5000)</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted fw-semibold">Web Framework:</td>
+                            <td>Flask 3.0+ with REST API Endpoints</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

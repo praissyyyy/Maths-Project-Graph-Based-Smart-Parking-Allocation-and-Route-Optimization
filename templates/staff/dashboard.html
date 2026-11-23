@@ -1,0 +1,216 @@
+{% extends "staff/layout.html" %}
+
+{% block staff_content %}
+<!-- Facility Overview Banner -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-2 col-md-4 col-6">
+        <div class="stat-card">
+            <small class="text-muted fw-semibold">Total Capacity</small>
+            <h3 class="fw-bold text-dark mt-1">{{ stats.capacity }} Slots</h3>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-6">
+        <div class="stat-card">
+            <small class="text-muted fw-semibold">Available Slots</small>
+            <h3 class="fw-bold text-success mt-1">{{ stats.available }}</h3>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-6">
+        <div class="stat-card">
+            <small class="text-muted fw-semibold">Occupied</small>
+            <h3 class="fw-bold text-danger mt-1">{{ stats.occupied }}</h3>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-6">
+        <div class="stat-card">
+            <small class="text-muted fw-semibold">Reserved</small>
+            <h3 class="fw-bold text-primary mt-1">{{ stats.reserved }}</h3>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-6">
+        <div class="stat-card">
+            <small class="text-muted fw-semibold">Maintenance</small>
+            <h3 class="fw-bold text-warning mt-1">{{ stats.maintenance }}</h3>
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-4 col-6">
+        <div class="stat-card">
+            <small class="text-muted fw-semibold">Utilization</small>
+            <h3 class="fw-bold text-info mt-1">{{ stats.utilization_pct }}%</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Action Shortcuts -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <a href="{{ url_for('staff.entry_exit') }}" class="btn btn-primary-custom w-100 py-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-box-arrow-in-right fs-5"></i> Vehicle Check-In
+        </a>
+    </div>
+    <div class="col-md-3 col-6">
+        <a href="{{ url_for('staff.entry_exit') }}#walkin" class="btn btn-success w-100 py-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-plus-circle fs-5"></i> Register Walk-In
+        </a>
+    </div>
+    <div class="col-md-3 col-6">
+        <a href="{{ url_for('staff.slots_management') }}" class="btn btn-outline-primary w-100 py-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-grid-3x3 fs-5"></i> Manage 30 Slots
+        </a>
+    </div>
+    <div class="col-md-3 col-6">
+        <a href="{{ url_for('staff.reports') }}" class="btn btn-outline-secondary w-100 py-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+            <i class="bi bi-download fs-5"></i> Export CSV Reports
+        </a>
+    </div>
+</div>
+
+<!-- Today's Movement & Active Bookings -->
+<div class="row g-4 mb-4">
+    <!-- Today's Movement KPI -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-activity text-primary me-2"></i>Today's Gate Movement</h6>
+            </div>
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-3 mb-3 border">
+                    <div>
+                        <small class="text-muted d-block fw-semibold">TODAY'S VEHICLE ENTRIES</small>
+                        <h2 class="fw-bold text-success mb-0">{{ today_entries }}</h2>
+                    </div>
+                    <i class="bi bi-box-arrow-in-right fs-1 text-success opacity-75"></i>
+                </div>
+                <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-3 mb-3 border">
+                    <div>
+                        <small class="text-muted d-block fw-semibold">TODAY'S VEHICLE EXITS</small>
+                        <h2 class="fw-bold text-secondary mb-0">{{ today_exits }}</h2>
+                    </div>
+                    <i class="bi bi-box-arrow-left fs-1 text-secondary opacity-75"></i>
+                </div>
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i> Data updated dynamically on gate check-in and check-out.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Reservations Table -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-car-front text-success me-2"></i>Current Active Bookings (In-Facility / Confirmed)</h6>
+                <a href="{{ url_for('staff.bookings_management') }}" class="btn btn-outline-primary btn-sm">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Ref ID</th>
+                            <th>Customer</th>
+                            <th>Vehicle</th>
+                            <th>Slot</th>
+                            <th>Status</th>
+                            <th class="text-end pe-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if active_bookings %}
+                            {% for b in active_bookings %}
+                                <tr>
+                                    <td class="ps-3 fw-bold font-monospace text-primary">{{ b.booking_id }}</td>
+                                    <td>{{ b.user.name if b.user else 'Guest' }}</td>
+                                    <td><strong>{{ b.vehicle_number }}</strong> ({{ b.vehicle_type }})</td>
+                                    <td><span class="badge bg-primary">{{ b.slot.slot_number }}</span></td>
+                                    <td>
+                                        {% if b.booking_status == 'CHECKED_IN' %}
+                                            <span class="badge bg-danger">In Facility</span>
+                                        {% else %}
+                                            <span class="badge bg-info text-dark">Confirmed</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end pe-3">
+                                        <a href="{{ url_for('staff.entry_exit', search_term=b.booking_id) }}" class="btn btn-outline-primary btn-sm">
+                                            Gate Action
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted">No vehicles currently active in facility.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Bookings & Recent Activity Log -->
+<div class="row g-4">
+    <!-- Upcoming Bookings -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-primary me-2"></i>Upcoming Bookings (Next 24 Hours)</h6>
+                <span class="badge bg-light text-dark border">{{ upcoming_bookings|length }} scheduled</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Arrival Time</th>
+                            <th>Vehicle</th>
+                            <th>Allocated Slot</th>
+                            <th>Customer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if upcoming_bookings %}
+                            {% for ub in upcoming_bookings %}
+                                <tr>
+                                    <td class="ps-3 fw-semibold">{{ ub.arrival_datetime.strftime('%d-%b %I:%M %p') }}</td>
+                                    <td>{{ ub.vehicle_number }}</td>
+                                    <td><span class="badge bg-success-subtle text-success border border-success-subtle">{{ ub.slot.slot_number }}</span></td>
+                                    <td>{{ ub.user.name if ub.user else 'Driver' }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">No upcoming bookings scheduled for today.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities Log -->
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-shield-check text-success me-2"></i>Recent Facility Activities</h6>
+                <a href="{{ url_for('staff.activity_logs') }}" class="btn btn-outline-secondary btn-sm">Full Log</a>
+            </div>
+            <div class="list-group list-group-flush small">
+                {% if recent_activities %}
+                    {% for act in recent_activities %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge bg-light text-dark border font-monospace">{{ act.action_type }}</span>
+                                <small class="text-muted">{{ act.timestamp.strftime('%H:%M:%S – %d %b') }}</small>
+                            </div>
+                            <div class="text-dark">{{ act.description }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-4 text-center text-muted">No activity recorded yet today.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Portal – {{ facility.facility_name }} | SmartPark{% endblock %}
+
+{% block extra_head %}
+<style>
+    .staff-sidebar {
+        background-color: #0F172A;
+        min-height: calc(100vh - 70px);
+        border-right: 1px solid #1E293B;
+    }
+    .staff-nav-link {
+        color: #94A3B8;
+        padding: 0.75rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 500;
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        transition: all 0.2s ease;
+    }
+    .staff-nav-link:hover {
+        color: #FFFFFF;
+        background-color: #1E293B;
+        border-left-color: #38BDF8;
+    }
+    .staff-nav-link.active {
+        color: #FFFFFF;
+        background-color: #1E293B;
+        border-left-color: #38BDF8;
+        font-weight: 600;
+    }
+    .staff-header-bar {
+        background-color: #FFFFFF;
+        border-bottom: 1px solid #E2E8F0;
+        padding: 1rem 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Staff Sidebar -->
+        <div class="col-lg-2 col-md-3 staff-sidebar">
+            <div class="p-3 border-bottom border-secondary border-opacity-25">
+                <span class="badge bg-info text-dark fw-bold mb-1">STAFF PORTAL</span>
+                <h6 class="text-white fw-bold mb-0 text-truncate">{{ facility.facility_name.split(' - ')[1] if ' - ' in facility.facility_name else facility.facility_name }}</h6>
+                <small class="text-secondary">Assigned: <span class="badge bg-secondary font-monospace">{{ facility.facility_id }}</span></small>
+            </div>
+            <nav class="py-2">
+                <a href="{{ url_for('staff.dashboard') }}" class="staff-nav-link {% if request.endpoint == 'staff.dashboard' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a href="{{ url_for('staff.slots_management') }}" class="staff-nav-link {% if request.endpoint == 'staff.slots_management' %}active{% endif %}">
+                    <i class="bi bi-grid-3x3"></i> Parking Slots
+                </a>
+                <a href="{{ url_for('staff.bookings_management') }}" class="staff-nav-link {% if request.endpoint == 'staff.bookings_management' %}active{% endif %}">
+                    <i class="bi bi-journal-text"></i> Bookings
+                </a>
+                <a href="{{ url_for('staff.entry_exit') }}" class="staff-nav-link {% if request.endpoint == 'staff.entry_exit' %}active{% endif %}">
+                    <i class="bi bi-arrow-left-right"></i> Vehicle Entry / Exit
+                </a>
+                <a href="{{ url_for('staff.occupancy_monitoring') }}" class="staff-nav-link {% if request.endpoint == 'staff.occupancy_monitoring' %}active{% endif %}">
+                    <i class="bi bi-pie-chart"></i> Occupancy
+                </a>
+                <a href="{{ url_for('staff.reports') }}" class="staff-nav-link {% if request.endpoint == 'staff.reports' %}active{% endif %}">
+                    <i class="bi bi-file-earmark-bar-graph"></i> Reports
+                </a>
+                <a href="{{ url_for('staff.activity_logs') }}" class="staff-nav-link {% if request.endpoint == 'staff.activity_logs' %}active{% endif %}">
+                    <i class="bi bi-clock-history"></i> Activity Logs
+                </a>
+                <a href="{{ url_for('staff.profile') }}" class="staff-nav-link {% if request.endpoint == 'staff.profile' %}active{% endif %}">
+                    <i class="bi bi-person-circle"></i> My Profile
+                </a>
+                <hr class="border-secondary border-opacity-25 my-2">
+                <a href="{{ url_for('parking.index') }}" class="staff-nav-link">
+                    <i class="bi bi-arrow-left"></i> Public Website
+                </a>
+                <a href="{{ url_for('auth.logout') }}" class="staff-nav-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i> Sign Out
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-10 col-md-9 bg-light min-vh-100">
+            <div class="staff-header-bar d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-building me-2 text-primary"></i>{{ facility.facility_name }}</h5>
+                    <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Gandhipuram, Coimbatore | Node: <code>{{ facility.node_id }}</code></small>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                        <i class="bi bi-dot"></i> Live Facility Access
+                    </span>
+                    <span class="small text-muted fw-semibold">Staff: {{ session.get('user_name') }}</span>
+                </div>
+            </div>
+
+            <div class="p-4">
+                {% block staff_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

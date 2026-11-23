@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account – SmartPark Gandhipuram{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white py-3 text-center border-bottom">
+                    <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-person-plus text-primary me-2"></i>Create New Account</h4>
+                    <small class="text-muted">Register for automated slot reservations in Gandhipuram</small>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" name="name" class="form-control" required placeholder="Praisy Devamahimai" value="{{ name or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control" required placeholder="user@smartpark.com" value="{{ email or '' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Phone Number</label>
+                            <input type="tel" name="phone" class="form-control" placeholder="+91 98765 43210" value="{{ phone or '' }}">
+                        </div>
+                        <div class="row g-2 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+                                <input type="password" name="password" class="form-control" required placeholder="At least 6 characters">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Confirm Password <span class="text-danger">*</span></label>
+                                <input type="password" name="confirm_password" class="form-control" required placeholder="Repeat password">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100 py-2 fw-semibold">
+                            Create Account
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4 small text-muted">
+                        Already have an account? <a href="{{ url_for('auth.login') }}" class="text-primary fw-semibold">Sign in here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

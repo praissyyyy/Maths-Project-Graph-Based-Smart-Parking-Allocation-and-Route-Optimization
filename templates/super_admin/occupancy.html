@@ -1,0 +1,143 @@
+{% extends "super_admin/layout.html" %}
+
+{% block extra_head %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block super_content %}
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h4 class="fw-bold mb-1"><i class="bi bi-pie-chart-fill text-primary me-2"></i>Multi-Lot Occupancy &amp; Network Analytics</h4>
+                <p class="text-muted mb-0">Cross-facility demand balancing, live slot statuses, and real-time load distribution across Gandhipuram.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <span class="badge bg-primary px-3 py-2 fs-6">Network Capacity: {{ total_capacity }}</span>
+                <span class="badge bg-danger px-3 py-2 fs-6">Parked: {{ total_occupied }}</span>
+                <span class="badge bg-success px-3 py-2 fs-6">Available: {{ total_available }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Comparison Cards for Each Facility -->
+<div class="row g-4 mb-4">
+    {% for f in facilities %}
+    {% set s = facility_stats[loop.index0] %}
+    <div class="col-lg-4 col-md-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="badge bg-primary-subtle text-primary font-monospace fw-bold">{{ f.facility_id }}</span>
+                    <h6 class="fw-bold mb-0 text-dark mt-1">{{ f.facility_name.split(' - ')[0] }}</h6>
+                </div>
+                <div class="text-end">
+                    <span class="fs-5 fw-bold text-primary">{{ s.utilization_pct }}%</span>
+                    <div class="text-muted" style="font-size:0.75rem;">Load</div>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="progress mb-3" style="height: 12px;">
+                    <div class="progress-bar bg-danger" style="width: {{ (s.occupied / s.capacity * 100)|round(1) }}%;" title="Occupied: {{ s.occupied }}"></div>
+                    <div class="progress-bar bg-primary" style="width: {{ (s.reserved / s.capacity * 100)|round(1) }}%;" title="Reserved: {{ s.reserved }}"></div>
+                    <div class="progress-bar bg-warning" style="width: {{ (s.maintenance / s.capacity * 100)|round(1) }}%;" title="Maintenance: {{ s.maintenance }}"></div>
+                    <div class="progress-bar bg-success" style="width: {{ (s.available / s.capacity * 100)|round(1) }}%;" title="Available: {{ s.available }}"></div>
+                </div>
+
+                <div class="row g-2 text-center small">
+                    <div class="col-3">
+                        <div class="text-muted">Total</div>
+                        <div class="fw-bold text-dark">{{ s.capacity }}</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="text-danger">Occ</div>
+                        <div class="fw-bold text-danger">{{ s.occupied }}</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="text-info">Res</div>
+                        <div class="fw-bold text-info">{{ s.reserved }}</div>
+                    </div>
+                    <div class="col-3">
+                        <div class="text-success">Free</div>
+                        <div class="fw-bold text-success">{{ s.available }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-light border-0 py-2 d-flex justify-content-between align-items-center">
+                <small class="text-muted"><i class="bi bi-geo-alt me-1"></i>Node: {{ f.node_id }}</small>
+                <a href="{{ url_for('parking.facility_detail', facility_id=f.facility_id) }}" class="btn btn-sm btn-link text-decoration-none p-0" target="_blank">
+                    Public View <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Cross-Facility Stacked Chart -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-bar-chart-steps text-primary me-2"></i>Cross-Facility Slot Allocation Breakdown</h6>
+                <span class="badge bg-light text-muted border">Stacked Slot Distribution</span>
+            </div>
+            <div class="card-body p-4">
+                <canvas id="stackedOccupancyChart" style="height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const labels = [{% for f in facilities %}"{{ f.facility_id }} - {{ f.facility_name.split(' - ')[0] }}",{% endfor %}];
+    const occupiedData = [{% for s in facility_stats %}{{ s.occupied }},{% endfor %}];
+    const reservedData = [{% for s in facility_stats %}{{ s.reserved }},{% endfor %}];
+    const maintenanceData = [{% for s in facility_stats %}{{ s.maintenance }},{% endfor %}];
+    const availableData = [{% for s in facility_stats %}{{ s.available }},{% endfor %}];
+
+    const ctx = document.getElementById('stackedOccupancyChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Occupied (Red)',
+                    data: occupiedData,
+                    backgroundColor: '#EF4444'
+                },
+                {
+                    label: 'Reserved (Blue)',
+                    data: reservedData,
+                    backgroundColor: '#3B82F6'
+                },
+                {
+                    label: 'Maintenance (Yellow)',
+                    data: maintenanceData,
+                    backgroundColor: '#F59E0B'
+                },
+                {
+                    label: 'Available (Green)',
+                    data: availableData,
+                    backgroundColor: '#10B981'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true }
+            },
+            plugins: {
+                legend: { position: 'top' }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
