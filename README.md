@@ -223,4 +223,4 @@ Outputs timeline metrics to `results/csv/dynamic_simulation_timeline.csv` and ti
 
 ## 📄 License & Attribution
 
-Developed by **Praisy Devamahimai J.** for the **M.Tech Cyber Security** academic project in **Mathematics for Cyber Security** (November 2026).
+Developed by **Praisy Deva Mahimai J and Alishiba Dass.** for the **M.Tech Cyber Security** academic project in **Mathematics for Cyber Security** (November 2026).
